@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
 import hydra.cluster.deploy.DeployService
-import hydra.cluster.deploy.DeployService.{Deploy, DeployMsg, UnDeployMsg}
+import hydra.cluster.deploy.DeployService.{ DeployMsg, UnDeployMsg}
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.

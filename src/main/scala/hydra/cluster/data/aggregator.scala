@@ -32,7 +32,7 @@ object Aggregator{
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
       val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0"))
-      val aggregator = systems.map{system =>system.actorOf(ClusterSingletonManager.props(
+      systems.map{system =>system.actorOf(ClusterSingletonManager.props(
         singletonProps = Props[Aggregator],
         terminationMessage = PoisonPill,
         settings = ClusterSingletonManagerSettings(system)),
@@ -46,7 +46,6 @@ object Aggregator{
         aggregatorProxy ! FailedMsg(add,System.currentTimeMillis())
         println("****** Send Failed Msg*******")
       }
-
     }
     else
       SimpleClusterApp.startup(args)
