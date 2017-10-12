@@ -6,7 +6,7 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import akka.remote.ContainerFormats.ActorRef
 import hydra.cluster.deploy.Container._
-import hydra.cluster.deploy.DeployService.{DeployMsg, UnDeployMsg}
+import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 
 import sys.process._
 import play.api.libs.json.Json
@@ -92,7 +92,7 @@ class Container extends Actor with ActorLogging {
 
     case StartMsg =>
       val res = Future(startCmd.!)
-      mediator ! Publish("deploy", DeployMsg(containerAddress, appname))
+      mediator ! Publish("deploy", DeployedMsg(containerAddress, appname))
       log.info(s"$appname has deploy on $containerAddress")
       startHealthCheck()
 

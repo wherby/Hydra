@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
 import hydra.cluster.deploy.DeployService
-import hydra.cluster.deploy.DeployService.{ DeployMsg, UnDeployMsg}
+import hydra.cluster.deploy.DeployService.{ DeployedMsg, UnDeployMsg}
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.
@@ -42,7 +42,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
     case MemberRemoved(member, previousStatus) =>
       log.info("Member is Removed: {} after {}",
         member.address, previousStatus)
-    case DeployMsg(address, app) =>
+    case DeployedMsg(address, app) =>
       applicationList.addApplicationToSystem(address, app)
       log.info("Member Status after deploy: {}", applicationList.getApplication())
     case UnDeployMsg(address, app) =>

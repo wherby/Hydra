@@ -3,17 +3,45 @@ package hydra.cluster.deploy
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Address, Deploy, PoisonPill, Props}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.remote.RemoteScope
-import hydra.cluster.deploy.DeployService.{DeployMsg, UnDeployMsg}
+import com.typesafe.config.ConfigFactory
+import hydra.cluster.deploy.Container.InitialMsg
+import hydra.cluster.deploy.DeployService.{DeployedMsg, DeployRecipe, UnDeployMsg}
 import hydra.cluster.simple.SimpleClusterApp
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 26/09/2017.
   */
+
+class DeployService extends Actor with ActorLogging {
+
+  import akka.cluster.pubsub.DistributedPubSubMediator.Publish
+
+  val mediator = DistributedPubSub(context.system).mediator
+
+  val config = ConfigFactory.load()
+  lazy val containerClazz: String = config.getString("hydra.container")
+
+  def receive = {
+    case DeployRecipe(appName, bashString, sysAddress, containerClass) =>
+      val container = DeployService.tryToInstanceDeployActor(containerClass.getOrElse(containerClazz), sysAddress, context.system, appName + "Container")
+      container.map {
+        container => container ! InitialMsg(bashString)
+          self ! DeployedMsg(sysAddress, appName)
+      }
+    case DeployedMsg(system, app) =>
+      mediator ! Publish("deploy", DeployedMsg(system, app))
+      log.info("Published Deploy message for :" + app)
+    case UnDeployMsg(system, app) =>
+      mediator ! Publish("deploy", UnDeployMsg(system, app))
+    case _ =>
+  }
+}
+
 object DeployService {
 
-  final case class DeployReq(appName: String, bashString: String)
+  final case class DeployRecipe(appName: String, bashString: String, sysAddress: Address, containerClass: Option[String] = None)
 
-  final case class DeployMsg(address: Address, app: String)
+  final case class DeployedMsg(address: Address, app: String)
 
   final case class UnDeployReq(appName: String, bashString: String)
 
@@ -36,7 +64,7 @@ object DeployService {
       val address = Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
       val actorRef = DeployService.tryToInstanceDeployActor("hydra.cluster.deploy.DeployService", address, systems(0), "aa")
       actorRef.map {
-        actorref => actorref ! DeployMsg(address, "CCCCCC")
+        actorref => actorref ! DeployedMsg(address, "CCCCCC")
       }
     }
     else
@@ -44,18 +72,4 @@ object DeployService {
   }
 }
 
-class DeployService extends Actor with ActorLogging {
 
-  import akka.cluster.pubsub.DistributedPubSubMediator.Publish
-
-  val mediator = DistributedPubSub(context.system).mediator
-
-  def receive = {
-    case DeployMsg(system, app) =>
-      mediator ! Publish("deploy", DeployMsg(system, app))
-      log.info("Published Deploy message for :" + app)
-    case UnDeployMsg(system, app) =>
-      mediator ! Publish("deploy", UnDeployMsg(system, app))
-    case _ =>
-  }
-}
