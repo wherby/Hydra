@@ -31,11 +31,7 @@ object SimpleClusterApp {
       val system = ActorSystem("ClusterSystem", config)
       // Create an actor that handles cluster domain events
       system.actorOf(Props[SimpleClusterListener], name = "clusterListener")
-/*      system.actorOf(ClusterSingletonManager.props(
-        singletonProps = Props[DeployService],
-        terminationMessage = PoisonPill,
-        settings = ClusterSingletonManagerSettings(system)),
-        name = "deployService")*/
+
       system
     }
   }

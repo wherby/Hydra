@@ -20,6 +20,8 @@ lazy val `hydra-cluster-scala` = project
       "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
       "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
       "org.scalatest" %% "scalatest" % "3.0.1" % Test,
+      "com.typesafe.play" %% "play-json" % "2.6.6",
+      "org.scalaj" %% "scalaj-http" % "2.3.0",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
     fork in run := true,
     mainClass in (Compile, run) := Some("hydra.cluster.simple.SimpleClusterApp"),
