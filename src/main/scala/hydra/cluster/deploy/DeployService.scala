@@ -4,9 +4,12 @@ import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Address, Deploy, 
 import akka.cluster.pubsub.DistributedPubSub
 import akka.remote.RemoteScope
 import com.typesafe.config.ConfigFactory
-import hydra.cluster.deploy.Container.InitialMsg
-import hydra.cluster.deploy.DeployService.{DeployedMsg, DeployRecipe, UnDeployMsg}
-import hydra.cluster.simple.SimpleClusterApp
+import hydra.cluster.container.Container.InitialMsg
+import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployReq, DeployedMsg, UnDeployMsg}
+import hydra.cluster.ClusterListener.SimpleClusterApp
+import play.api.libs.json.Json
+
+import scala.util.Random
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 26/09/2017.
@@ -20,13 +23,19 @@ class DeployService extends Actor with ActorLogging {
 
   val config = ConfigFactory.load()
   lazy val containerClazz: String = config.getString("hydra.container")
+  val deployScheduler = context.actorOf(Props[DeployScheduler], "deployScheduler")
 
   def receive = {
-    case DeployRecipe(appName, bashString, sysAddress, containerClass) =>
+    case DeployReq(appconfig, containerClass) =>
+      deployScheduler ! DeployReq(appconfig, containerClass)
+    case DeployRecipe(appconfig, sysAddress, containerClass) =>
+      val configJson = Json.parse(appconfig)
+      val appName = (configJson \ "appname").asOpt[String].getOrElse("app" + Random.nextString(3))
       val container = DeployService.tryToInstanceDeployActor(containerClass.getOrElse(containerClazz), sysAddress, context.system, appName + "Container")
       container.map {
-        container => container ! InitialMsg(bashString)
-          self ! DeployedMsg(sysAddress, appName)
+        container => container ! InitialMsg(appconfig)
+          mediator ! Publish("deploy", DeployedMsg(sysAddress, appName))
+          log.info("Published Deploy message for :" + appName)
       }
     case DeployedMsg(system, app) =>
       mediator ! Publish("deploy", DeployedMsg(system, app))
@@ -39,7 +48,9 @@ class DeployService extends Actor with ActorLogging {
 
 object DeployService {
 
-  final case class DeployRecipe(appName: String, bashString: String, sysAddress: Address, containerClass: Option[String] = None)
+  final case class DeployReq(appconfigString: String, containerClazz: Option[String] = None)
+
+  final case class DeployRecipe(appconfigString: String, sysAddress: Address, containerClass: Option[String] = None)
 
   final case class DeployedMsg(address: Address, app: String)
 

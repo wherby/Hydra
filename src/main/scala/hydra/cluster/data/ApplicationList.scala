@@ -1,4 +1,4 @@
-package hydra.cluster.simple
+package hydra.cluster.data
 
 import akka.actor.Address
 
@@ -6,7 +6,7 @@ import akka.actor.Address
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.
   */
-class ApplicationList {
+class ApplicationList extends ApplicationListTrait{
   import scala.collection.mutable.Map
   var systemlist:Map[Address,List[String]] = Map()
   def addSystem(address:Address): Map[Address,List[String]] ={

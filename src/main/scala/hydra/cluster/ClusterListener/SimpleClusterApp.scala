@@ -1,4 +1,4 @@
-package hydra.cluster.simple
+package hydra.cluster.ClusterListener
 
 import com.typesafe.config.ConfigFactory
 import akka.actor.{ActorSystem, PoisonPill, Props}

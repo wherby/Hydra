@@ -1,12 +1,12 @@
-package hydra.cluster.simple
+package hydra.cluster.ClusterListener
 
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
 import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
 import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
-import hydra.cluster.deploy.DeployService
-import hydra.cluster.deploy.DeployService.{ DeployedMsg, UnDeployMsg}
+import hydra.cluster.data.ApplicationList
+import hydra.cluster.data.ApplicationListManager
+import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.
@@ -17,7 +17,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
   import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 
   val cluster = Cluster(context.system)
-  val applicationList = new ApplicationList()
+  val applicationList = ApplicationListManager.applist
 
 
   // subscribe to cluster changes, re-subscribe when restart 

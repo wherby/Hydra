@@ -1,18 +1,16 @@
-package hydra.cluster.deploy
+package hydra.cluster.container
 
 import akka.actor.{Actor, ActorLogging, Cancellable}
 import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
-import akka.remote.ContainerFormats.ActorRef
-import hydra.cluster.deploy.Container._
+import hydra.cluster.container.Container._
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
-
-import sys.process._
 import play.api.libs.json.Json
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
+import scala.sys.process._
 import scalaj.http._
 
 /**
@@ -29,6 +27,7 @@ class Container extends Actor with ActorLogging {
   val healthRecordLength = 10
   var healthRecord = Array.fill(healthRecordLength)(0)
   var healthIndex = 0
+  var appConfig = ""
   lazy val containerAddress = Cluster(context.system).selfAddress
 
   var cancellable: Option[Cancellable] = None
@@ -63,6 +62,7 @@ class Container extends Actor with ActorLogging {
   }
 
   def parseConfigure(configureString: String) = {
+    appConfig = configureString
     val configJson = Json.parse(configureString)
     appname = (configJson \ "appname").asOpt[String].getOrElse("")
     (configJson \ "prestartcmd").asOpt[Seq[String]] map {
@@ -85,6 +85,7 @@ class Container extends Actor with ActorLogging {
 
     case RelocateMsg =>
       log.info(s"$appname is about to reloacte")
+
       self ! FinishMsg
 
     case InitialMsg(appConfig) => parseConfigure(appConfig)

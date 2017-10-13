@@ -1,12 +1,9 @@
 package hydra.cluster.test
 
-import akka.actor.{Address, PoisonPill, Props}
-import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings, ClusterSingletonProxy, ClusterSingletonProxySettings}
-import hydra.cluster.data.Aggregator
-import hydra.cluster.data.Aggregator.FailedMsg
-import hydra.cluster.deploy.Container.InitialMsg
+import akka.actor.{Address}
+import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService
-import hydra.cluster.simple.SimpleClusterApp
+import hydra.cluster.ClusterListener.SimpleClusterApp
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 10/10/2017.
@@ -16,7 +13,7 @@ object ContainerTest {
     if (args.isEmpty) {
       val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0"))
       val address = Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
-      val actorRef = DeployService.tryToInstanceDeployActor("hydra.cluster.deploy.Container", address, systems(0), "ContainerApp")
+      val actorRef = DeployService.tryToInstanceDeployActor("hydra.cluster.container.Container", address, systems(0), "ContainerApp")
       val appConfigString =
         """
           |{
