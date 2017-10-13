@@ -2,9 +2,8 @@ package hydra.cluster.test
 
 import akka.actor.{Address, PoisonPill, Props}
 import akka.cluster.singleton._
-import hydra.cluster.data.Aggregator.FailedMsg
 import hydra.cluster.deploy.DeployService
-import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployReq, DeployedMsg}
+import hydra.cluster.deploy.DeployService.{DeployReq}
 import hydra.cluster.ClusterListener.SimpleClusterApp
 
 /**

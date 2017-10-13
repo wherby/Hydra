@@ -5,7 +5,7 @@ import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import hydra.cluster.container.Container._
-import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
+import hydra.cluster.deploy.DeployService.{DeployReq, DeployedMsg, UnDeployMsg}
 import play.api.libs.json.Json
 
 import scala.concurrent.Future
@@ -78,14 +78,14 @@ class Container extends Actor with ActorLogging {
     case TickMsg =>
       log.info(s"$appname checked")
       val result = doHealthCheck()
-      if (doHealthCheck()) {
+      if (result) {
         self ! RelocateMsg
         log.info(s"$appname is to relocate due to health check failed")
       }
 
     case RelocateMsg =>
       log.info(s"$appname is about to reloacte")
-
+      mediator ! Publish("deployReq",DeployReq(appConfig, None))
       self ! FinishMsg
 
     case InitialMsg(appConfig) => parseConfigure(appConfig)
@@ -93,12 +93,11 @@ class Container extends Actor with ActorLogging {
 
     case StartMsg =>
       val res = Future(startCmd.!)
-      mediator ! Publish("deploy", DeployedMsg(containerAddress, appname))
       log.info(s"$appname has deploy on $containerAddress")
       startHealthCheck()
 
     case FinishMsg =>
-      mediator ! Publish("deploy", UnDeployMsg(containerAddress, appname))
+      mediator ! Publish("deploy", UnDeployMsg(containerAddress, appConfig))
       context stop self
       log.info(s"$appname is undeployed")
   }

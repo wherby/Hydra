@@ -6,19 +6,20 @@ import hydra.cluster.data.ApplicationListManager
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployReq}
 import hydra.cluster.scheduler.SchedulerTrait
 import play.api.libs.json.Json
-
+import akka.cluster.Cluster
 /**
   * Created by TaoZhou(whereby@live.cn) on 13/10/2017.
   */
 class DeployScheduler extends Actor with ActorLogging{
   val config = ConfigFactory.load()
   lazy val schedulerClazz: String = config.getString("hydra.scheduler")
+  val selfAddress = Cluster(context.system).selfAddress
   def receive={
     case DeployReq(appconfig,containerClass)=>
       val configJson = Json.parse(appconfig)
       val schedulerClass = (configJson \ "scheduler").asOpt[String].getOrElse(schedulerClazz)
       val scheduler = Class.forName(schedulerClass).newInstance().asInstanceOf[SchedulerTrait]
-      var address = scheduler.schedule(ApplicationListManager.applist.systemlist,appconfig)
+      var address = scheduler.schedule(ApplicationListManager.getApplicationList(selfAddress).systemlist,appconfig)
       log.info(s"Selct the address: $address")
       sender() !DeployRecipe(appconfig, address, containerClass)
   }

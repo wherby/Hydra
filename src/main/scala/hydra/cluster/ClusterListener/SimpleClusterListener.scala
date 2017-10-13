@@ -17,7 +17,8 @@ class SimpleClusterListener extends Actor with ActorLogging {
   import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 
   val cluster = Cluster(context.system)
-  val applicationList = ApplicationListManager.applist
+  val selfAddress = Cluster(context.system).selfAddress
+  val applicationList = ApplicationListManager.getApplicationList(selfAddress)
 
 
   // subscribe to cluster changes, re-subscribe when restart 
@@ -47,7 +48,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
       log.info("Member Status after deploy: {}", applicationList.getApplication())
     case UnDeployMsg(address, app) =>
       applicationList.removeApplicationFromSystem(address, app)
-      log.info("Member Status after deploy: {}", applicationList.getApplication())
+      log.info("Member Status after undeploy: {}", applicationList.getApplication())
     case _: MemberEvent => // ignore
   }
 }
