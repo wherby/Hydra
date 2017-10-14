@@ -86,7 +86,7 @@ class Container extends Actor with ActorLogging {
 
     case RelocateMsg =>
       log.info(s"$appname is about to reloacte")
-      mediator ! Publish(HydraTopic.deployReq,DeployReq(appConfig, None))
+      mediator ! Publish(HydraTopic.deployReq,DeployReq(appConfig))
       self ! FinishMsg
 
     case InitialMsg(appConfig) => parseConfigure(appConfig)

@@ -5,13 +5,15 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import akka.remote.RemoteScope
 import com.typesafe.config.ConfigFactory
+import hydra.cluster.ClusterListener.Aggregator.FailedMsg
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployReq, DeployedMsg, UnDeployMsg}
 import hydra.cluster.ClusterListener.{HydraTopic, SimpleClusterApp}
 import play.api.libs.json.Json
 
 import scala.util.Random
-
+import akka.cluster.Cluster
+import hydra.cluster.data.ApplicationListManager
 /**
   * Created by TaoZhou(whereby@live.cn) on 26/09/2017.
   */
@@ -21,16 +23,19 @@ class DeployService extends Actor with ActorLogging {
   import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 
   val mediator = DistributedPubSub(context.system).mediator
-  mediator ! Subscribe(HydraTopic.deployReq, self)
-  mediator ! Subscribe(HydraTopic.nodeFail, self)
-
   val config = ConfigFactory.load()
   lazy val containerClazz: String = config.getString("hydra.container")
   val deployScheduler = context.actorOf(Props[DeployScheduler], "deployScheduler")
+  val selfAddress = Cluster(context.system).selfAddress
+
+  override def preStart(): Unit = {
+    mediator ! Subscribe(HydraTopic.deployReq, self)
+    mediator ! Subscribe(HydraTopic.nodeFail, self)
+  }
 
   def receive = {
-    case DeployReq(appconfig, containerClass) =>
-      deployScheduler ! DeployReq(appconfig, containerClass)
+    case DeployReq(appconfig) =>
+      deployScheduler ! DeployReq(appconfig)
     case DeployRecipe(appconfig, sysAddress, containerClass) =>
       val configJson = Json.parse(appconfig)
       val appName = (configJson \ "appname").asOpt[String].getOrElse("app" + Random.nextString(3))
@@ -42,13 +47,28 @@ class DeployService extends Actor with ActorLogging {
       }
     case UnDeployMsg(system, app) =>
       mediator ! Publish(HydraTopic.deployedMsg, UnDeployMsg(system, app))
+    case FailedMsg(address, time) =>
+      log.info(s"Deploy serice handle fialed nod: $address")
+      val systemlist=  ApplicationListManager.getApplicationList(selfAddress).systemlist
+      val appconfigList :List[String] = systemlist.get(address).getOrElse(List())
+      log.info(s"applist: $appconfigList")
+      log.info(s"systemList: $systemlist")
+      ApplicationListManager.applicationListMap.remove(address)
+      ApplicationListManager.applicationListMap.values.map{
+        applist =>applist.removeSystem(address)
+      }
+      appconfigList map{
+        appconfig =>
+          log.info(s"For Node Failed the app will redeploy: $appconfig")
+          self ! DeployReq(appconfig)
+      }
     case _ =>
   }
 }
 
 object DeployService {
 
-  final case class DeployReq(appconfigString: String, containerClazz: Option[String] = None)
+  final case class DeployReq(appconfigString: String)
 
   final case class DeployRecipe(appconfigString: String, sysAddress: Address, containerClass: Option[String] = None)
 

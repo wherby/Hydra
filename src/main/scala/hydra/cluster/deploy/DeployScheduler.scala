@@ -15,11 +15,13 @@ class DeployScheduler extends Actor with ActorLogging {
   val config = ConfigFactory.load()
   lazy val schedulerClazz: String = config.getString("hydra.scheduler")
   val selfAddress = Cluster(context.system).selfAddress
+  lazy val containerClazz: String = config.getString("hydra.container")
 
   def receive = {
-    case DeployReq(appconfig, containerClass) =>
+    case DeployReq(appconfig) =>
       val configJson = Json.parse(appconfig)
       val schedulerClass = (configJson \ "scheduler").asOpt[String].getOrElse(schedulerClazz)
+      val containerClass = (configJson \ "container").asOpt[String]
       val scheduler = Class.forName(schedulerClass).newInstance().asInstanceOf[SchedulerTrait]
       val address = scheduler.schedule(ApplicationListManager.getApplicationList(selfAddress).systemlist, appconfig)
       log.info(s"Selct the address: $address")

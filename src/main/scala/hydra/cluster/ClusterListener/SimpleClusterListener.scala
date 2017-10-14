@@ -4,6 +4,9 @@ import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.DistributedPubSub
+import akka.cluster.pubsub.DistributedPubSubMediator.Publish
+import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
+import hydra.cluster.ClusterListener.Aggregator.FailedMsgReport
 import hydra.cluster.data.ApplicationListManager
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 
@@ -18,13 +21,16 @@ class SimpleClusterListener extends Actor with ActorLogging {
   val cluster = Cluster(context.system)
   val selfAddress = Cluster(context.system).selfAddress
   val applicationList = ApplicationListManager.getApplicationList(selfAddress)
-
+  val mediator = DistributedPubSub(context.system).mediator
+  val aggregatorProxy = context.system.actorOf(ClusterSingletonProxy.props(
+    singletonManagerPath = "/user/aggregator",
+    settings = ClusterSingletonProxySettings(context.system)),
+    name = "aggregatorProxy")
 
   // subscribe to cluster changes, re-subscribe when restart 
   override def preStart(): Unit = {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
       classOf[MemberEvent], classOf[UnreachableMember])
-    val mediator = DistributedPubSub(context.system).mediator
     mediator ! Subscribe(HydraTopic.deployedMsg, self)
   }
 
@@ -36,10 +42,9 @@ class SimpleClusterListener extends Actor with ActorLogging {
       log.info(applicationList.getApplication())
       log.info("Member is Up: {}", member.address)
     case UnreachableMember(member) =>
-      applicationList.removeSystem(member.address)
-      log.info(applicationList.getApplication())
       log.info("Member detected as unreachable: {}", member)
     case MemberRemoved(member, previousStatus) =>
+      aggregatorProxy ! FailedMsgReport(member.address, System.currentTimeMillis())
       log.info("Member is Removed: {} after {}",
         member.address, previousStatus)
     case DeployedMsg(address, app) =>

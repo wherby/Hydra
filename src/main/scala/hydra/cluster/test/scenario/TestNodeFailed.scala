@@ -1,18 +1,18 @@
-package hydra.cluster.test
+package hydra.cluster.test.scenario
 
-import akka.actor.{Address, PoisonPill, Props}
-import akka.cluster.singleton._
-import hydra.cluster.deploy.DeployService
-import hydra.cluster.deploy.DeployService.{DeployReq}
+import akka.actor.{Address}
+import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.deploy.DeployService.DeployReq
 
 /**
-  * Created by TaoZhou(whereby@live.cn) on 13/10/2017.
+  * Created by TaoZhou(whereby@live.cn) on 14/10/2017.
   */
-object DeployServiceTest {
+object TestNodeFailed {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
-      val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0"))
+      val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0" ))
+
       val appConfigString =
         """
           |{
@@ -25,9 +25,12 @@ object DeployServiceTest {
       val deployServiceProxy = systems(0).actorOf(ClusterSingletonProxy.props(
         singletonManagerPath = "/user/deployservice",
         settings = ClusterSingletonProxySettings(systems(0))),
-        name = "deployserviceProxy")
+        name = "deployserviceProxy2")
       deployServiceProxy ! DeployReq(appConfigString)
       println("deploy python finished")
+      Thread.sleep(10000)
+      systems(0).terminate()
+      println("teminate one node")
     }
     else
       SimpleClusterApp.startup(args)
