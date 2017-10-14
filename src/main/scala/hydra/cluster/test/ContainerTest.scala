@@ -22,11 +22,11 @@ object ContainerTest {
           | "prestartcmd":["cmd.exe","/c","dir"]
           |}
         """.stripMargin
-      actorRef map{
+      actorRef map {
         appref => appref ! InitialMsg(appConfigString)
-                  Thread.sleep(10)
-                  appref ! "check"
-                  //appref ! "done"
+          Thread.sleep(10)
+          appref ! "check"
+        //appref ! "done"
       }
       println("Done")
     }

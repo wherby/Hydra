@@ -20,7 +20,7 @@ class SimpleDB extends DBImplement {
     records
   }
 
-  def getKey(key : String) : List[String]={
+  def getKey(key: String): List[String] = {
     records(key)
   }
 }

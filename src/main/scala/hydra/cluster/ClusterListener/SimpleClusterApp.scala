@@ -1,10 +1,7 @@
 package hydra.cluster.ClusterListener
 
 import com.typesafe.config.ConfigFactory
-import akka.actor.{ActorSystem, PoisonPill, Props}
-import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
-import akka.remote.ContainerFormats.ActorRef
-import hydra.cluster.deploy.DeployService
+import akka.actor.{ActorSystem, Props}
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.

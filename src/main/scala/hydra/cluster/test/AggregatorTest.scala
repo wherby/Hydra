@@ -2,9 +2,8 @@ package hydra.cluster.test
 
 import akka.actor.{Address, PoisonPill, Props}
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings, ClusterSingletonProxy, ClusterSingletonProxySettings}
-import hydra.cluster.data.Aggregator
-import hydra.cluster.data.Aggregator.FailedMsg
-import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.ClusterListener.Aggregator.FailedMsg
+import hydra.cluster.ClusterListener.{Aggregator, SimpleClusterApp}
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 13/10/2017.

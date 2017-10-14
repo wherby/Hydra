@@ -2,9 +2,8 @@ package hydra.cluster.ClusterListener
 
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
-import akka.actor.{Actor, ActorLogging, PoisonPill, Props}
+import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.DistributedPubSub
-import hydra.cluster.data.ApplicationList
 import hydra.cluster.data.ApplicationListManager
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 
@@ -26,7 +25,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
       classOf[MemberEvent], classOf[UnreachableMember])
     val mediator = DistributedPubSub(context.system).mediator
-    mediator ! Subscribe("deploy", self)
+    mediator ! Subscribe(HydraTopic.deployedMsg, self)
   }
 
   override def postStop(): Unit = cluster.unsubscribe(self)

@@ -1,13 +1,13 @@
 package hydra.cluster.deploy
 
-import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Address, Deploy, PoisonPill, Props}
+import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Address, Deploy, Props}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import akka.remote.RemoteScope
 import com.typesafe.config.ConfigFactory
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployReq, DeployedMsg, UnDeployMsg}
-import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.ClusterListener.{HydraTopic, SimpleClusterApp}
 import play.api.libs.json.Json
 
 import scala.util.Random
@@ -21,7 +21,8 @@ class DeployService extends Actor with ActorLogging {
   import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 
   val mediator = DistributedPubSub(context.system).mediator
-  mediator ! Subscribe("deployReq", self)
+  mediator ! Subscribe(HydraTopic.deployReq, self)
+  mediator ! Subscribe(HydraTopic.nodeFail, self)
 
   val config = ConfigFactory.load()
   lazy val containerClazz: String = config.getString("hydra.container")
@@ -33,14 +34,14 @@ class DeployService extends Actor with ActorLogging {
     case DeployRecipe(appconfig, sysAddress, containerClass) =>
       val configJson = Json.parse(appconfig)
       val appName = (configJson \ "appname").asOpt[String].getOrElse("app" + Random.nextString(3))
-      val container = DeployService.tryToInstanceDeployActor(containerClass.getOrElse(containerClazz), sysAddress, context.system, appName + "Container"  + Random.nextInt(1000).toString)
+      val container = DeployService.tryToInstanceDeployActor(containerClass.getOrElse(containerClazz), sysAddress, context.system, appName + "Container" + Random.nextInt(1000).toString)
       container.map {
         container => container ! InitialMsg(appconfig)
-          mediator ! Publish("deploy", DeployedMsg(sysAddress, appconfig))
+          mediator ! Publish(HydraTopic.deployedMsg, DeployedMsg(sysAddress, appconfig))
           log.info("Published Deploy message for :" + appconfig)
       }
     case UnDeployMsg(system, app) =>
-      mediator ! Publish("deploy", UnDeployMsg(system, app))
+      mediator ! Publish(HydraTopic.deployedMsg, UnDeployMsg(system, app))
     case _ =>
   }
 }
