@@ -46,5 +46,17 @@ object SimpleClusterApp {
       system
     }
   }
+  def simpleStartup(ports: Seq[String]): Seq[ActorSystem] = {
+    ports map { port =>
+      // Override the configuration of the port
+      val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
+        withFallback(ConfigFactory.load())
+
+      // Create an Akka system
+      val system = ActorSystem("ClusterSystem", config)
+      system
+    }
+  }
+
 }
 

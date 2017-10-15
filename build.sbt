@@ -19,6 +19,7 @@ lazy val `hydra-cluster-scala` = project
       "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
       "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
       "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
+      "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion,
       "org.scalatest" %% "scalatest" % "3.0.1" % Test,
       "com.typesafe.play" %% "play-json" % "2.6.6",
       "org.scalaj" %% "scalaj-http" % "2.3.0",
