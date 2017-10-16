@@ -26,6 +26,7 @@ object TestNodeFailed {
         singletonManagerPath = "/user/deployservice",
         settings = ClusterSingletonProxySettings(systems(0))),
         name = "deployserviceProxy2")
+      Thread.sleep(10000)
       deployServiceProxy ! DeployReq(appConfigString)
       println("deploy python finished")
       Thread.sleep(10000)

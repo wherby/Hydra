@@ -4,10 +4,9 @@ import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import hydra.cluster.ClusterListener.Aggregator.FailedMsgReport
-import hydra.cluster.data.ApplicationListManager
+import hydra.cluster.data.{ApplicationListManager, ApplicationListTrait}
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 
 /**
@@ -20,18 +19,19 @@ class SimpleClusterListener extends Actor with ActorLogging {
 
   val cluster = Cluster(context.system)
   val selfAddress = Cluster(context.system).selfAddress
-  val applicationList = ApplicationListManager.getApplicationList(selfAddress)
+  val applicationList :ApplicationListTrait = ApplicationListManager.getApplicationList(selfAddress)
   val mediator = DistributedPubSub(context.system).mediator
   val aggregatorProxy = context.system.actorOf(ClusterSingletonProxy.props(
     singletonManagerPath = "/user/aggregator",
     settings = ClusterSingletonProxySettings(context.system)),
     name = "aggregatorProxy")
+  mediator ! Subscribe(HydraTopic.deployedMsg, self)
 
   // subscribe to cluster changes, re-subscribe when restart 
   override def preStart(): Unit = {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
       classOf[MemberEvent], classOf[UnreachableMember])
-    mediator ! Subscribe(HydraTopic.deployedMsg, self)
+
   }
 
   override def postStop(): Unit = cluster.unsubscribe(self)

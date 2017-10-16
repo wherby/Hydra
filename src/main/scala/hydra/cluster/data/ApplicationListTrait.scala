@@ -8,13 +8,13 @@ import scala.collection.mutable.Map
   * Created by TaoZhou(whereby@live.cn) on 13/10/2017.
   */
 trait ApplicationListTrait {
-  def addSystem(address: Address): Map[Address, List[String]]
+  def addSystem(address: Address)
 
-  def removeSystem(address: Address): Map[Address, List[String]]
+  def removeSystem(address: Address)
 
-  def addApplicationToSystem(address: Address, app: String): Map[Address, List[String]]
+  def addApplicationToSystem(address: Address, app: String)
 
-  def removeApplicationFromSystem(address: Address, app: String): Map[Address, List[String]]
+  def removeApplicationFromSystem(address: Address, app: String)
 
   def getApplication(): String
 }

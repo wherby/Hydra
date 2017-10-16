@@ -8,7 +8,7 @@ import scala.util.Random
 /**
   * Created by TaoZhou(whereby@live.cn) on 15/10/2017.
   */
-object TestDDataMap {
+object DDataSetTest {
   import hydra.cluster.data.DData._
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {

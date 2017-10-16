@@ -15,4 +15,5 @@ object DData {
 
   case class RemoveKey(key: String)
 
+  case class GetAllKey(key: String)
 }

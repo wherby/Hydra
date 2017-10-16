@@ -9,28 +9,28 @@ import akka.actor.Address
 class ApplicationList extends ApplicationListTrait{
   import scala.collection.mutable.Map
   var systemlist:Map[Address,List[String]] = Map()
-  def addSystem(address:Address): Map[Address,List[String]] ={
+  def addSystem(address:Address) ={
     systemlist.get(address) match {
       case Some(value) => systemlist
       case None => systemlist= systemlist +(address-> List());systemlist
     }
   }
 
-  def removeSystem(address: Address):Map[Address,List[String]]={
+  def removeSystem(address: Address)={
     systemlist.get(address) match {
       case Some(value) => systemlist.remove(address);systemlist
       case None =>systemlist
     }
   }
 
-  def addApplicationToSystem(address: Address,app:String):Map[Address,List[String]]={
+  def addApplicationToSystem(address: Address,app:String)={
     systemlist.get(address) match {
       case Some(value)=> systemlist(address) =systemlist(address):::List(app);systemlist
       case None => systemlist +(address->List(app))
     }
   }
 
-  def removeApplicationFromSystem(address: Address, app:String):Map[Address,List[String]]={
+  def removeApplicationFromSystem(address: Address, app:String)={
     systemlist.get(address) match {
       case Some(value) => systemlist(address) = systemlist(address).filter(_ != app);systemlist
       case None => systemlist + (address-> List())
@@ -44,7 +44,7 @@ class ApplicationList extends ApplicationListTrait{
 
 object ApplicationList {
   def main(args: Array[String]): Unit = {
-    var applist= new ApplicationList()
+    val applist= new ApplicationList()
     val add =new Address("akka.tcp","localhost")
     applist.addSystem(add)
     applist.addApplicationToSystem(add,"app1")
