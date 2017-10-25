@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, Cancellable, Props}
 import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
-import hydra.cluster.ClusterListener.HydraTopic
+import hydra.cluster.Cons.{AppRequst, HydraTopic}
 import hydra.cluster.container.Container._
 import hydra.cluster.deploy.DeployService.{DeployReq, UnDeployMsg}
 import play.api.libs.json.Json
@@ -67,11 +67,11 @@ class Container extends Actor with ActorLogging {
   def parseConfigure(configureString: String) = {
     appConfig = configureString
     val configJson = Json.parse(configureString)
-    appname = (configJson \ "appname").asOpt[String].getOrElse("")
-    (configJson \ "prestartcmd").asOpt[Seq[String]] map {
+    appname = (configJson \ AppRequst.appname).asOpt[String].getOrElse("")
+    (configJson \ AppRequst.prestartcmd).asOpt[Seq[String]] map {
       seqcmd => preStartCmd = seqcmd
     }
-    (configJson \ "startcmd").asOpt[Seq[String]] map {
+    (configJson \ AppRequst.startcmd).asOpt[Seq[String]] map {
       startcmd => startCmd = startcmd
     }
   }

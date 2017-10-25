@@ -7,6 +7,7 @@ import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import com.typesafe.config.ConfigFactory
 import hydra.cluster.ClusterListener.Aggregator.{FailedMsg, FailedMsgReport}
+import hydra.cluster.Cons.HydraTopic
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 02/10/2017.

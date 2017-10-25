@@ -1,4 +1,4 @@
-package hydra.cluster.ClusterListener
+package hydra.cluster.Cons
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 14/10/2017.

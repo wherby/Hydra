@@ -6,6 +6,7 @@ import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import hydra.cluster.ClusterListener.Aggregator.FailedMsgReport
+import hydra.cluster.Cons.HydraTopic
 import hydra.cluster.data.{ApplicationListManager, ApplicationListTrait}
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 

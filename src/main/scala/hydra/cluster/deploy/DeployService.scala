@@ -8,11 +8,11 @@ import com.typesafe.config.ConfigFactory
 import hydra.cluster.ClusterListener.Aggregator.FailedMsg
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployReq, DeployedMsg, UnDeployMsg}
-import hydra.cluster.ClusterListener.{HydraTopic, SimpleClusterApp}
 import play.api.libs.json.Json
 
 import scala.util.Random
 import akka.cluster.Cluster
+import hydra.cluster.Cons.{AppRequst, HydraTopic}
 import hydra.cluster.data.ApplicationListManager
 /**
   * Created by TaoZhou(whereby@live.cn) on 26/09/2017.
@@ -38,7 +38,7 @@ class DeployService extends Actor with ActorLogging {
       deployScheduler ! DeployReq(appconfig)
     case DeployRecipe(appconfig, sysAddress, containerClass) =>
       val configJson = Json.parse(appconfig)
-      val appName = (configJson \ "appname").asOpt[String].getOrElse("app" + Random.nextString(3))
+      val appName = (configJson \ AppRequst.appname).asOpt[String].getOrElse("app" + Random.nextString(3))
       val container = DeployService.tryToInstanceDeployActor(containerClass.getOrElse(containerClazz), sysAddress, context.system, appName + "Container" + Random.nextInt(1000).toString)
       container.map {
         container => container ! InitialMsg(appconfig)
@@ -89,18 +89,6 @@ object DeployService {
     }
   }
 
-  def main(args: Array[String]): Unit = {
-    if (args.isEmpty) {
-      val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0"))
-      val address = Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
-      val actorRef = DeployService.tryToInstanceDeployActor("hydra.cluster.deploy.DeployService", address, systems(0), "aa")
-      actorRef.map {
-        actorref => actorref ! DeployedMsg(address, "CCCCCC")
-      }
-    }
-    else
-      SimpleClusterApp.startup(args)
-  }
 }
 
 
