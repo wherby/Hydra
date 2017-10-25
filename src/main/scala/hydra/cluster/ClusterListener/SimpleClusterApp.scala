@@ -13,8 +13,6 @@ object SimpleClusterApp {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
       val systems = startup(Seq("2551", "2552", "0"))
-      Thread.sleep(10000)
-      systems(0).terminate()
     }
     else
       startup(args)
