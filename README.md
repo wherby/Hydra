@@ -16,3 +16,10 @@ The failure detection by gossip protocol is very efficient. For more information
 Within Hydra, you don't need to know anything about Akka Cluster and get the high available container framework.
 
 
+
+## About the repository
+
+The repository is copyed from https://bitbucket.org/whereby/hydra which is deveoping repository on bitbucket.
+
+
+
