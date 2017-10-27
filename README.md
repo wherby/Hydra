@@ -19,7 +19,15 @@ Within Hydra, you don't need to know anything about Akka Cluster and get the hig
 
 ## About the repository
 
-The repository is copyed from https://bitbucket.org/whereby/hydra which is deveoping repository on bitbucket.
+The repository is copyed from https://bitbucket.org/whereby/hydra which is developing repository on bitbucket.
+
+
+## User defined Classes
+
+There are two classes user need to rewrite to meet their needs:
+
+ 1. [Container](./Docs/Container.md)  
+ 2. [Scheduler](./Docs/Scheduler.md)
 
 
 
