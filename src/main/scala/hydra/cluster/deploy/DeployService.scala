@@ -7,9 +7,10 @@ import akka.remote.RemoteScope
 import com.typesafe.config.ConfigFactory
 import hydra.cluster.ClusterListener.Aggregator.FailedMsg
 import hydra.cluster.container.Container.InitialMsg
-import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployReq, DeployedMsg, UnDeployMsg}
+import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployedMsg, UnDeployMsg}
 import play.api.libs.json.Json
 
+import  hydra.cluster.common.msg.DeployService.DeployReq
 import scala.util.Random
 import akka.cluster.Cluster
 import hydra.cluster.Cons.{AppRequst, HydraTopic}
@@ -68,7 +69,7 @@ class DeployService extends Actor with ActorLogging {
 
 object DeployService {
 
-  final case class DeployReq(appconfigString: String)
+ // final case class DeployReq(appconfigString: String)
 
   final case class DeployRecipe(appconfigString: String, sysAddress: Address, containerClass: Option[String] = None)
 

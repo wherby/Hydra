@@ -1,5 +1,7 @@
 # Hydra
 
+[![Build Status](https://travis-ci.org/wherby/Hydra.svg?branch=master)](https://travis-ci.org/wherby/Hydra)
+
 ## What's Hydra?
 
 Hydra is an Akka Cluster based system which provides high available service for apps in container.

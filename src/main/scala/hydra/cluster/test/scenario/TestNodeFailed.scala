@@ -3,7 +3,7 @@ package hydra.cluster.test.scenario
 import akka.actor.{Address}
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import hydra.cluster.ClusterListener.SimpleClusterApp
-import hydra.cluster.deploy.DeployService.DeployReq
+import hydra.cluster.common.msg.DeployService.DeployReq
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 14/10/2017.

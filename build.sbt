@@ -7,7 +7,7 @@ lazy val `hydra-cluster-scala` = project
   .in(file("."))
   .settings(multiJvmSettings: _*)
   .settings(
-    organization := "com.hydra.cluster",
+    organization := "org.hydra.cluster",
     scalaVersion := "2.12.2",
     scalacOptions in Compile ++= Seq("-deprecation", "-feature", "-unchecked", "-Xlog-reflective-calls", "-Xlint"),
     javacOptions in Compile ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
@@ -23,6 +23,7 @@ lazy val `hydra-cluster-scala` = project
       "org.scalatest" %% "scalatest" % "3.0.1" % Test,
       "com.typesafe.play" %% "play-json" % "2.6.6",
       "org.scalaj" %% "scalaj-http" % "2.3.0",
+      "Hydra.Cluster.org"%%"hydracommon"%"0.1-SNAPSHOT",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
     fork in run := true,
     mainClass in (Compile, run) := Some("hydra.cluster.simple.SimpleClusterApp"),

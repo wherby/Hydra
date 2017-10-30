@@ -1,6 +1,6 @@
-#ClusterListener 
+# ClusterListener 
 
-##Aggregator is to aggregate messages from nodes
+## Aggregator is to aggregate messages from nodes
 
 
-##SimpleClusterLister is to listen the cluster event
+## SimpleClusterLister is to listen the cluster event

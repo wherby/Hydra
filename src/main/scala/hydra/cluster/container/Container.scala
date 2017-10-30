@@ -6,9 +6,9 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import hydra.cluster.Cons.{AppRequst, HydraTopic}
 import hydra.cluster.container.Container._
-import hydra.cluster.deploy.DeployService.{DeployReq, UnDeployMsg}
+import hydra.cluster.deploy.DeployService.{ UnDeployMsg}
 import play.api.libs.json.Json
-
+import  hydra.cluster.common.msg.DeployService.DeployReq
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.sys.process._
