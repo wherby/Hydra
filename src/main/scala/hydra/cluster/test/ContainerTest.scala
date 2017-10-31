@@ -1,6 +1,6 @@
 package hydra.cluster.test
 
-import akka.actor.{Address}
+import akka.actor.Address
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService
 import hydra.cluster.ClusterListener.SimpleClusterApp
