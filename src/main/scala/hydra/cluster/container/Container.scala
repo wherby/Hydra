@@ -24,12 +24,12 @@ class Container extends Actor with ActorLogging {
 
   val mediator = DistributedPubSub(context.system).mediator
   var appname = ""
+  var appConfig = ""
   var preStartCmd: Seq[String] = Seq()
   var startCmd: Seq[String] = Seq()
   val healthRecordLength = 10
   var healthRecord = Array.fill(healthRecordLength)(0)
   var healthIndex = 0
-  var appConfig = ""
   lazy val containerAddress = Cluster(context.system).selfAddress
 
   var cancellable: Option[Cancellable] = None
@@ -83,6 +83,9 @@ class Container extends Actor with ActorLogging {
       val result = doHealthCheck()
       if (result) {
         self ! RelocateMsg
+        cancellable.map{
+          cancellable =>cancellable.cancel()
+        }
         log.info(s"$appname is to relocate due to health check failed")
       }
 
@@ -102,16 +105,12 @@ class Container extends Actor with ActorLogging {
 
     case FinishMsg =>
       mediator ! Publish(HydraTopic.deployedMsg, UnDeployMsg(containerAddress, appConfig))
-      context stop self
       log.info(s"$appname is undeployed")
+      context stop self
   }
 
   override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
     preStartCmd.!
-    cancellable map {
-      cancellable => cancellable.cancel()
-        log.info("Scheduler Stop")
-    }
     cancellable = None
   }
 
