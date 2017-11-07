@@ -4,7 +4,7 @@
 
 ## What's Hydra?
 
-Hydra is an Akka Cluster based system which provides high available service for apps in container.
+Hydra is an Akka Cluster based system which provides high available container service for apps.
 
 ## Why is Hydra?
 
@@ -17,7 +17,10 @@ The failure detection by gossip protocol is very efficient. For more information
   
 Within Hydra, you don't need to know anything about Akka Cluster and get the high available container framework.
 
+## How Hydra detected node failure?
 
+Hydra is based on Akka Cluster, Hydra will use Akka node to hold containers of apps. If the node failed, the Akka gossip
+protocol will quickly detect the failure and report to Hydra to do further work.
 
 ## About the repository
 
@@ -31,6 +34,9 @@ There are two classes user need to rewrite to meet their needs:
  1. [Container](./Docs/Container.md)  
  2. [Scheduler](./Docs/Scheduler.md)
 
+## About release:
+
+ [0.1.0](https://github.com/wherby/HydraRelease/tree/master/0.1.0)
 
 
 
