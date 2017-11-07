@@ -17,7 +17,7 @@ The failure detection by gossip protocol is very efficient. For more information
   
 Within Hydra, you don't need to know anything about Akka Cluster and get the high available container framework.
 
-## How Hydra detected node failure?
+## How Hydra detects node failure?
 
 Hydra is based on Akka Cluster, Hydra will use Akka node to hold containers of apps. If the node failed, the Akka gossip
 protocol will quickly detect the failure and report to Hydra to do further work.
