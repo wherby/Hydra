@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import hydra.cluster.ClusterListener.Aggregator.FailedMsgReport
-import hydra.cluster.Cons.HydraTopic
+import hydra.cluster.Cons.{HydraTopic, Roles}
 import hydra.cluster.data.{ApplicationListManager, ApplicationListTrait}
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 
@@ -20,7 +20,7 @@ class SimpleClusterListener extends Actor with ActorLogging {
 
   val cluster = Cluster(context.system)
   val selfAddress = Cluster(context.system).selfAddress
-  val applicationList :ApplicationListTrait = ApplicationListManager.getApplicationList(selfAddress)
+  val applicationList: ApplicationListTrait = ApplicationListManager.getApplicationList(selfAddress)
   val mediator = DistributedPubSub(context.system).mediator
   val aggregatorProxy = context.system.actorOf(ClusterSingletonProxy.props(
     singletonManagerPath = "/user/aggregator",
@@ -39,15 +39,19 @@ class SimpleClusterListener extends Actor with ActorLogging {
 
   def receive = {
     case MemberUp(member) =>
-      applicationList.addSystem(member.address)
-      log.info(applicationList.getApplication())
-      log.info("Member is Up: {}", member.address)
+      if (member.roles.contains(Roles.HydraRole)) {
+        applicationList.addSystem(member.address)
+        log.info(applicationList.getApplication())
+        log.info("Member is Up: {}", member.address)
+      }
     case UnreachableMember(member) =>
       log.info("Member detected as unreachable: {}", member)
     case MemberRemoved(member, previousStatus) =>
-      aggregatorProxy ! FailedMsgReport(member.address, System.currentTimeMillis())
-      log.info("Member is Removed: {} after {}",
-        member.address, previousStatus)
+      if (member.roles.contains(Roles.HydraRole)) {
+        aggregatorProxy ! FailedMsgReport(member.address, System.currentTimeMillis())
+        log.info("Member is Removed: {} after {}",
+          member.address, previousStatus)
+      }
     case DeployedMsg(address, app) =>
       applicationList.addApplicationToSystem(address, app)
       log.info("Member Status after deploy: {}", applicationList.getApplication())

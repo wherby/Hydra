@@ -10,11 +10,11 @@ import scala.util.Random
   * one actor system which the app not running.
   */
 class SimpleScheduler extends SchedulerTrait {
-  def schedule(systemlist: Map[Address, List[String]], appconfig: String): Address = {
+  def schedule(systemlist: Map[Address, List[String]], appconfig: String): Option[Address] = {
     val listWithoutApp = systemlist.filterNot(_._2.contains(appconfig)).toSeq
     listWithoutApp match {
-      case Nil => systemlist.head._1
-      case _ => listWithoutApp(Random.nextInt(listWithoutApp.length))._1
+      case Nil => None
+      case _ => Some(listWithoutApp(Random.nextInt(listWithoutApp.length))._1)
     }
   }
 }

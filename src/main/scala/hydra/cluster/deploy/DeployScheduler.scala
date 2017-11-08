@@ -27,6 +27,8 @@ class DeployScheduler extends Actor with ActorLogging {
       val scheduler = Class.forName(schedulerClass).newInstance().asInstanceOf[SchedulerTrait]
       val address = scheduler.schedule(ApplicationListManager.getApplicationList(selfAddress).systemlist, appconfig)
       log.info(s"Selct the address: $address")
-      sender() ! DeployRecipe(appconfig, address, containerClass)
+      address match {
+        case Some(address)=>sender() ! DeployRecipe(appconfig, address, containerClass)
+      }
   }
 }
