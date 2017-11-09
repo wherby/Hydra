@@ -1,6 +1,7 @@
 import com.typesafe.sbt.SbtMultiJvm.multiJvmSettings
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 import AssemblyKeys._
+import sbt.url
 
 val akkaVersion = "2.5.4"
 
@@ -12,8 +13,9 @@ lazy val `hydra-cluster-scala` = project
   .in(file("."))
   .settings(multiJvmSettings: _*)
   .settings(
-
-    organization := "org.hydra.cluster",
+    name := "Hydra",
+    version := "0.1.0",
+    organization := "io.github.wherby",
     scalaVersion := "2.12.2",
     scalacOptions in Compile ++= Seq("-deprecation", "-feature", "-unchecked", "-Xlog-reflective-calls", "-Xlint"),
     javacOptions in Compile ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
@@ -32,11 +34,42 @@ lazy val `hydra-cluster-scala` = project
       "io.github.wherby"%%"hydracommon"%"0.1.0",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
     fork in run := true,
-    mainClass in (Compile, run) := Some("hydra.cluster.simple.SimpleClusterApp"),
+    mainClass in (Compile, run) := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),
+    mainClass in assembly := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),//object with,
     // disable parallel tests
     parallelExecution in Test := false,
     resolvers ++= appResolvers,
-    licenses := Seq(("CC0", url("http://creativecommons.org/publicdomain/zero/1.0")))
+    licenses := Seq("GPL-3.0" -> url("https://opensource.org/licenses/GPL-3.0"))
   )
   .configs (MultiJvm)
-mainClass in assembly := Some("hydra.cluster.ClusterListener.SimpleClusterApp.main")//object with,
+
+
+useGpg := true
+
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (version.value.contains("SNAPSHOT"))
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+}
+
+licenses := Seq("GPL-3.0" -> url("https://opensource.org/licenses/GPL-3.0"))
+
+homepage := Some(url("https://github.com/wherby/Hydra"))
+
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/wherby/Hydra.git"),
+    "scm:git@github.com:wherby/Hydra.git"
+  )
+)
+
+developers := List(
+  Developer(
+    id    = "wherby",
+    name  = "Tao Zhou",
+    email = "187225577@qq.com",
+    url   = url("https://github.com/wherby")
+  )
+)

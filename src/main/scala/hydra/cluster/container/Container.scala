@@ -1,6 +1,6 @@
 package hydra.cluster.container
 
-import akka.actor.{Actor, ActorLogging, Cancellable, Props}
+import akka.actor.{Actor, ActorLogging, Cancellable}
 import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
@@ -12,7 +12,6 @@ import hydra.cluster.common.msg.DeployService.DeployReq
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.sys.process._
-import scala.util.Random
 import scalaj.http._
 import scala.language.postfixOps
 
@@ -34,7 +33,6 @@ class Container extends Actor with ActorLogging {
   lazy val containerAddress = Cluster(context.system).selfAddress
 
   var cancellable: Option[Cancellable] = None
-  val runner = context.actorOf(Props[Runner], "runer" + Random.nextInt(1000).toString)
 
 
   def startHealthCheck(): Unit = {

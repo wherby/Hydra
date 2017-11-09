@@ -39,4 +39,9 @@ There are two classes user need to rewrite to meet their needs:
  [0.1.0](https://github.com/wherby/HydraRelease/tree/master/0.1.0)
 
 
+## Download from sonatype:
+
+    https://oss.sonatype.org/content/groups/staging/io/github/wherby/
+
+
 
