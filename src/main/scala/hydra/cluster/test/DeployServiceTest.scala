@@ -1,6 +1,5 @@
 package hydra.cluster.test
 
-import akka.actor.{Address, PoisonPill, Props}
 import akka.cluster.singleton._
 import  hydra.cluster.common.msg.DeployService.DeployReq
 import hydra.cluster.ClusterListener.SimpleClusterApp
@@ -20,7 +19,6 @@ object DeployServiceTest {
           | "prestartcmd":["cmd.exe","/c","dir"]
           |}
         """.stripMargin
-      val address = Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
       val deployServiceProxy = systems(0).actorOf(ClusterSingletonProxy.props(
         singletonManagerPath = "/user/deployservice",
         settings = ClusterSingletonProxySettings(systems(0))),

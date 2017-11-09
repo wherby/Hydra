@@ -29,6 +29,7 @@ class DeployScheduler extends Actor with ActorLogging {
       log.info(s"Selct the address: $address")
       address match {
         case Some(address)=>sender() ! DeployRecipe(appconfig, address, containerClass)
+        case _=>
       }
   }
 }

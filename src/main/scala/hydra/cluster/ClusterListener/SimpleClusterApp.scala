@@ -12,7 +12,7 @@ import hydra.cluster.deploy.DeployService
 object SimpleClusterApp {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
-      val systems = startup(Seq("2551", "2552", "0"))
+      startup(Seq("2551"))
     }
     else
       startup(args)

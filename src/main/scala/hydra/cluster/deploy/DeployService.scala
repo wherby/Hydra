@@ -10,11 +10,12 @@ import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployedMsg, UnDeployMsg}
 import play.api.libs.json.Json
 
-import  hydra.cluster.common.msg.DeployService.DeployReq
+import hydra.cluster.common.msg.DeployService.DeployReq
 import scala.util.Random
 import akka.cluster.Cluster
 import hydra.cluster.Cons.{AppRequst, HydraTopic}
 import hydra.cluster.data.ApplicationListManager
+
 /**
   * Created by TaoZhou(whereby@live.cn) on 26/09/2017.
   */
@@ -42,7 +43,8 @@ class DeployService extends Actor with ActorLogging {
       val appName = (configJson \ AppRequst.appname).asOpt[String].getOrElse("app" + Random.nextString(3))
       val container = DeployService.tryToInstanceDeployActor(containerClass.getOrElse(containerClazz), sysAddress, context.system, appName + "Container" + Random.nextInt(1000).toString)
       container.map {
-        container => container ! InitialMsg(appconfig)
+        container =>
+          container ! InitialMsg(appconfig)
           mediator ! Publish(HydraTopic.deployedMsg, DeployedMsg(sysAddress, appconfig))
           log.info("Published Deploy message for :" + appconfig)
       }
@@ -50,15 +52,15 @@ class DeployService extends Actor with ActorLogging {
       mediator ! Publish(HydraTopic.deployedMsg, UnDeployMsg(system, app))
     case FailedMsg(address, time) =>
       log.info(s"Deploy serice handle fialed nod: $address")
-      val systemlist=  ApplicationListManager.getApplicationList(selfAddress).systemlist
-      val appconfigList :List[String] = systemlist.get(address).getOrElse(List())
+      val systemlist = ApplicationListManager.getApplicationList(selfAddress).systemlist
+      val appconfigList: List[String] = systemlist.get(address).getOrElse(List())
       log.info(s"applist: $appconfigList")
       log.info(s"systemList: $systemlist")
       ApplicationListManager.applicationListMap.remove(address)
-      ApplicationListManager.applicationListMap.values.map{
-        applist =>applist.removeSystem(address)
+      ApplicationListManager.applicationListMap.values.map {
+        applist => applist.removeSystem(address)
       }
-      appconfigList map{
+      appconfigList map {
         appconfig =>
           log.info(s"For Node Failed the app will redeploy: $appconfig")
           self ! DeployReq(appconfig)
@@ -69,7 +71,7 @@ class DeployService extends Actor with ActorLogging {
 
 object DeployService {
 
- // final case class DeployReq(appconfigString: String)
+  // final case class DeployReq(appconfigString: String)
 
   final case class DeployRecipe(appconfigString: String, sysAddress: Address, containerClass: Option[String] = None)
 
@@ -85,7 +87,7 @@ object DeployService {
       val actorRef = system.actorOf(Props(clazz).withDeploy(Deploy(scope = RemoteScope(address))), actorName)
       Some(actorRef)
     } catch {
-      case ex => println("Actor Failed " + ex.getMessage() + " " + ex.getStackTrace)
+      case ex: Throwable => println("Actor Failed " + ex.getMessage() + " " + ex.getStackTrace)
         None
     }
   }

@@ -2,7 +2,6 @@ package hydra.cluster.data
 
 import akka.actor.Address
 
-import scala.collection.mutable.Map
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 13/10/2017.

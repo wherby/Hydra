@@ -11,28 +11,28 @@ class ApplicationList extends ApplicationListTrait{
   var systemlist:Map[Address,List[String]] = Map()
   def addSystem(address:Address) ={
     systemlist.get(address) match {
-      case Some(value) => systemlist
-      case None => systemlist= systemlist +(address-> List());systemlist
+      case Some(value) =>
+      case None => systemlist= systemlist +(address-> List())
     }
   }
 
   def removeSystem(address: Address)={
     systemlist.get(address) match {
-      case Some(value) => systemlist.remove(address);systemlist
-      case None =>systemlist
+      case Some(value) => systemlist.remove(address)
+      case None =>
     }
   }
 
   def addApplicationToSystem(address: Address,app:String)={
     systemlist.get(address) match {
-      case Some(value)=> systemlist(address) =systemlist(address):::List(app);systemlist
+      case Some(value)=> systemlist(address) =systemlist(address):::List(app)
       case None => systemlist +(address->List(app))
     }
   }
 
   def removeApplicationFromSystem(address: Address, app:String)={
     systemlist.get(address) match {
-      case Some(value) => systemlist(address) = systemlist(address).filter(_ != app);systemlist
+      case Some(value) => systemlist(address) = systemlist(address).filter(_ != app)
       case None => systemlist + (address-> List())
     }
   }

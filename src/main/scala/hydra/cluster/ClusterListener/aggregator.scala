@@ -1,7 +1,6 @@
 package hydra.cluster.ClusterListener
 
 import akka.actor.{Actor, ActorLogging, Address}
-import akka.cluster.client.ClusterClient.Publish
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}

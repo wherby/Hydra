@@ -6,14 +6,15 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import hydra.cluster.Cons.{AppRequst, HydraTopic}
 import hydra.cluster.container.Container._
-import hydra.cluster.deploy.DeployService.{ UnDeployMsg}
+import hydra.cluster.deploy.DeployService.{UnDeployMsg}
 import play.api.libs.json.Json
-import  hydra.cluster.common.msg.DeployService.DeployReq
+import hydra.cluster.common.msg.DeployService.DeployReq
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.sys.process._
 import scala.util.Random
 import scalaj.http._
+import scala.language.postfixOps
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 08/10/2017.
@@ -33,7 +34,7 @@ class Container extends Actor with ActorLogging {
   lazy val containerAddress = Cluster(context.system).selfAddress
 
   var cancellable: Option[Cancellable] = None
-  val runner = context.actorOf(Props[Runner],"runer" + Random.nextInt(1000).toString)
+  val runner = context.actorOf(Props[Runner], "runer" + Random.nextInt(1000).toString)
 
 
   def startHealthCheck(): Unit = {
@@ -41,12 +42,12 @@ class Container extends Actor with ActorLogging {
   }
 
   def doHealthCheck(): Boolean = {
-    var response: HttpResponse[String] =null
-    try{
-      response= Http("http://localhost:5000/health").asString
+    var response: HttpResponse[String] = null
+    try {
+      response = Http("http://localhost:5000/health").asString
     }
     catch {
-      case _=> response = null
+      case _: Throwable => response = null
     }
     log.info(s"Result of health : $response")
     var result = 0
@@ -83,15 +84,15 @@ class Container extends Actor with ActorLogging {
       val result = doHealthCheck()
       if (result) {
         self ! RelocateMsg
-        cancellable.map{
-          cancellable =>cancellable.cancel()
+        cancellable.map {
+          cancellable => cancellable.cancel()
         }
         log.info(s"$appname is to relocate due to health check failed")
       }
 
     case RelocateMsg =>
       log.info(s"$appname is about to reloacte")
-      mediator ! Publish(HydraTopic.deployReq,DeployReq(appConfig))
+      mediator ! Publish(HydraTopic.deployReq, DeployReq(appConfig))
       self ! FinishMsg
 
     case InitialMsg(appConfig) => parseConfigure(appConfig)
@@ -99,7 +100,7 @@ class Container extends Actor with ActorLogging {
 
     case StartMsg =>
       //runner ! StartCmd(startCmd)
-      val res = Future(startCmd.!)
+      Future(startCmd.!)
       log.info(s"$appname has deploy on $containerAddress")
       startHealthCheck()
 
@@ -128,6 +129,6 @@ object Container {
 
   case class InitialMsg(appConfig: String)
 
-  case class StartCmd(startcmds : Seq[String])
+  case class StartCmd(startcmds: Seq[String])
 
 }

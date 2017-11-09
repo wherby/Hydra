@@ -9,7 +9,7 @@ import hydra.cluster.deploy.DeployService.DeployedMsg
   * For hydra-cluster-scala
   * Created by TaoZhou(187225577@qq.com) on 25/10/2017. 
   */
-object DeploySericeTest {
+object InstanceSericeTest {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
       val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0"))
