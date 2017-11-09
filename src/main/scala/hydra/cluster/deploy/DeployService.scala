@@ -4,16 +4,15 @@ import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Address, Deploy, 
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import akka.remote.RemoteScope
-import com.typesafe.config.ConfigFactory
 import hydra.cluster.ClusterListener.Aggregator.FailedMsg
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployedMsg, UnDeployMsg}
 import play.api.libs.json.Json
-
 import hydra.cluster.common.msg.DeployService.DeployReq
+
 import scala.util.Random
 import akka.cluster.Cluster
-import hydra.cluster.Cons.{AppRequst, HydraTopic}
+import hydra.cluster.Cons.{AppRequst, HydraConfig, HydraTopic}
 import hydra.cluster.data.ApplicationListManager
 
 /**
@@ -25,7 +24,7 @@ class DeployService extends Actor with ActorLogging {
   import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 
   val mediator = DistributedPubSub(context.system).mediator
-  val config = ConfigFactory.load()
+  val config = HydraConfig.load()
   lazy val containerClazz: String = config.getString("hydra.container")
   val deployScheduler = context.actorOf(Props[DeployScheduler], "deployScheduler")
   val selfAddress = Cluster(context.system).selfAddress

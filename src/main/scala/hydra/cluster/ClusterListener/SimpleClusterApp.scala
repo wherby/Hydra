@@ -3,6 +3,7 @@ package hydra.cluster.ClusterListener
 import com.typesafe.config.ConfigFactory
 import akka.actor.{ActorSystem, PoisonPill, Props}
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
+import hydra.cluster.Cons.HydraConfig
 import hydra.cluster.deploy.DeployService
 
 /**
@@ -21,8 +22,9 @@ object SimpleClusterApp {
   def startup(ports: Seq[String]): Seq[ActorSystem] = {
     ports map { port =>
       // Override the configuration of the port
-      val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
-        withFallback(ConfigFactory.load())
+      val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port)
+          .withFallback(HydraConfig.load())
+
 
       // Create an Akka system
       val system = ActorSystem("ClusterSystem", config)
@@ -48,7 +50,7 @@ object SimpleClusterApp {
     ports map { port =>
       // Override the configuration of the port
       val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
-        withFallback(ConfigFactory.load())
+        withFallback(HydraConfig.load())
 
       // Create an Akka system
       val system = ActorSystem("ClusterSystem", config)
