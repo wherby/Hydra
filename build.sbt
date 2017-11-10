@@ -1,7 +1,9 @@
 import com.typesafe.sbt.SbtMultiJvm.multiJvmSettings
 import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
-import AssemblyKeys._
 import sbt.url
+import sbt._
+import Keys._
+import sbtassembly.AssemblyPlugin.autoImport._
 
 val akkaVersion = "2.5.4"
 
@@ -43,7 +45,11 @@ lazy val `hydra-cluster-scala` = project
   )
   .configs (MultiJvm)
 
-
+assemblyMergeStrategy in assembly := {
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
 useGpg := true
 
 publishTo := {
