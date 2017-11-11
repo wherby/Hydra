@@ -18,7 +18,7 @@ object TestNodeFailed {
           """
             |{
             | "appname": "appTest",
-            | "startcmd":["cmd.exe","/c","python demo/app.py"],
+            | "startcmd":["python demo/app.py"],
             | "prestartcmd":[]
             |}
           """.stripMargin

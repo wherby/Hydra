@@ -15,8 +15,8 @@ object DeployServiceTest {
         """
           |{
           | "appname": "appTest",
-          | "startcmd":["cmd.exe","/c","python demo/app.py"],
-          | "prestartcmd":["cmd.exe","/c","dir"]
+          | "startcmd":["python demo/app.py"],
+          | "prestartcmd":["dir"]
           |}
         """.stripMargin
       val deployServiceProxy = systems(0).actorOf(ClusterSingletonProxy.props(

@@ -25,12 +25,13 @@ class Container extends Actor with ActorLogging {
   val mediator = DistributedPubSub(context.system).mediator
   var appname = ""
   var appConfig = ""
-  var preStartCmd: Seq[String] = Seq()
-  var startCmd: Seq[String] = Seq()
+  var preStartCmd: List[String] = List()
+  var startCmd: List[String] = List()
   val healthRecordLength = 10
   var healthRecord = Array.fill(healthRecordLength)(0)
   var healthIndex = 0
   lazy val containerAddress = Cluster(context.system).selfAddress
+  lazy val osString = System.getProperty("os.name")
 
   var cancellable: Option[Cancellable] = None
 
@@ -67,11 +68,16 @@ class Container extends Actor with ActorLogging {
     appConfig = configureString
     val configJson = Json.parse(configureString)
     appname = (configJson \ AppRequst.appname).asOpt[String].getOrElse("")
-    (configJson \ AppRequst.prestartcmd).asOpt[Seq[String]] map {
+    (configJson \ AppRequst.prestartcmd).asOpt[List[String]] map {
       seqcmd => preStartCmd = seqcmd
     }
-    (configJson \ AppRequst.startcmd).asOpt[Seq[String]] map {
-      startcmd => startCmd = startcmd
+    (configJson \ AppRequst.startcmd).asOpt[List[String]] map {
+      startcmd =>
+        if (osString.toLowerCase().startsWith("win")) {
+          startCmd = "cmd.exe" :: "/c" :: startcmd
+        } else {
+          startCmd = "bash" :: "-c" :: startcmd
+        }
     }
   }
 
@@ -98,6 +104,7 @@ class Container extends Actor with ActorLogging {
 
     case StartMsg =>
       //runner ! StartCmd(startCmd)
+      log.info(s"Start App container With: $startCmd")
       Future(startCmd.!)
       log.info(s"$appname has deploy on $containerAddress")
       startHealthCheck()
@@ -127,6 +134,6 @@ object Container {
 
   case class InitialMsg(appConfig: String)
 
-  case class StartCmd(startcmds: Seq[String])
+  case class StartCmd(startcmds: List[String])
 
 }
