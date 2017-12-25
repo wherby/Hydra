@@ -33,7 +33,7 @@ lazy val `hydra-cluster-scala` = project
       "org.scalatest" %% "scalatest" % "3.0.1" % Test,
       "com.typesafe.play" %% "play-json" % "2.6.6",
       "org.scalaj" %% "scalaj-http" % "2.3.0",
-      "io.github.wherby"%%"hydracommon"%"0.1.0",
+      "io.github.wherby"%%"hydracommon"%"0.1.1-SNAPSHOT",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
     fork in run := true,
     mainClass in (Compile, run) := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),

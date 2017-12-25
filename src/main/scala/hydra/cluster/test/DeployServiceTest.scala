@@ -1,7 +1,7 @@
 package hydra.cluster.test
 
 import akka.cluster.singleton._
-import  hydra.cluster.common.msg.DeployService.DeployReq
+import  hydra.cluster.common.DeployService.DeployReq
 import hydra.cluster.ClusterListener.SimpleClusterApp
 
 /**
@@ -22,7 +22,7 @@ object DeployServiceTest {
       val deployServiceProxy = systems(0).actorOf(ClusterSingletonProxy.props(
         singletonManagerPath = "/user/deployservice",
         settings = ClusterSingletonProxySettings(systems(0))),
-        name = "deployserviceProxy")
+        name = "deployserviceProxy2")
       deployServiceProxy ! DeployReq(appConfigString)
       println("deploy python finished")
     }

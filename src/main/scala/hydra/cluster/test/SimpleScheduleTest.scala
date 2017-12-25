@@ -9,7 +9,7 @@ import hydra.cluster.scheduler.SimpleScheduler
   */
 object SimpleScheduleTest {
   def main(args: Array[String]): Unit = {
-    var applist = new ApplicationList()
+    val applist = new ApplicationList()
     val add = new Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
     val add2 = new Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2552)
     applist.addSystem(add)

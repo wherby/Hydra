@@ -8,7 +8,7 @@ import hydra.cluster.Cons.{AppRequst, HydraTopic}
 import hydra.cluster.container.Container._
 import hydra.cluster.deploy.DeployService.{UnDeployMsg}
 import play.api.libs.json.Json
-import hydra.cluster.common.msg.DeployService.DeployReq
+import hydra.cluster.common.DeployService.DeployReq
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.sys.process._

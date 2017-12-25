@@ -8,7 +8,7 @@ import hydra.cluster.ClusterListener.Aggregator.FailedMsg
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployedMsg, UnDeployMsg}
 import play.api.libs.json.Json
-import hydra.cluster.common.msg.DeployService.DeployReq
+import hydra.cluster.common.DeployService.DeployReq
 
 import scala.util.Random
 import akka.cluster.Cluster
