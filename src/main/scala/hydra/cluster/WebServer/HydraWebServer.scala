@@ -1,6 +1,7 @@
 package hydra.cluster.WebServer
 
 import akka.actor.ActorSystem
+import akka.cluster.Cluster
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives.{complete, _}
@@ -10,6 +11,7 @@ import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySetti
 import hydra.cluster.Log.HydraLogger
 import hydra.cluster.WebServer.models.{AppRequest, AppRequestFormats, AppRequestJsonFormat}
 import hydra.cluster.common.DeployService.DeployReq
+import hydra.cluster.data.{ApplicationListManager,AppListTrait}
 
 
 
@@ -22,13 +24,15 @@ object HydraWebServer extends  AppRequestFormats with HydraLogger with AppReques
 
   val config = HydraConfig.load()
 
+  var applicationList: AppListTrait = _
+
   def createWebServer(system2:ActorSystem): Unit ={
     implicit val system =system2
     implicit val materializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
-
-
+    val selfAddress = Cluster(system2).selfAddress
+    applicationList  = ApplicationListManager.getApplicationList(selfAddress)
     val deployServiceProxy = system.actorOf(ClusterSingletonProxy.props(
       singletonManagerPath = "/user/deployservice",
       settings = ClusterSingletonProxySettings(system)),
@@ -50,25 +54,17 @@ object HydraWebServer extends  AppRequestFormats with HydraLogger with AppReques
             complete("App started")
           }
         }
-/* * another way to handle request.
-      entity(as[HttpEntity]){appRequest =>
-          var registered = false
-          appRequest.dataBytes.map(_.utf8String).runForeach(data => {
-            val body = Json.parse(data)
-            try {
-              body.asOpt[AppRequest] match {
-                case Some(appRequest) =>
-                  registered = true
-                  println("app registe success")
-              }
-            }catch {
-              case _ => println("input is not correct")
-            }
-          })
-          complete("App started")
-        }*/
       }
-    }
+    }~
+        get{
+          path("app" / Segment){ appname=>
+            val hostIPs = applicationList.appList.get(appname)match {
+              case Some(hostSeq) => hostSeq.map(address => address.host.get)
+              case _=> List()
+            }
+            complete(hostIPs)
+          }
+        }
     val hostName = config.getString("hydra.web.hostname")
     val port = config.getInt("hydra.web.port")
     val bindFuture = Http().bindAndHandle(route,hostName,port)

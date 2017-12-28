@@ -13,4 +13,12 @@ object TestCons {
             | "prestartcmd":[]
             |}
             """.stripMargin
+  val pythonTestConfig2 =  """
+                            |{
+                            | "appname": "appTest2",
+                            | "startcmd":["python demo/app.py  --port 8000"],
+                            | "healthcheck":"http://localhost:8000/health",
+                            | "prestartcmd":[]
+                            |}
+                          """.stripMargin
 }
