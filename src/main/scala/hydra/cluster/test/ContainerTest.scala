@@ -15,26 +15,8 @@ object ContainerTest {
       val address = Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
       val actorRef = DeployService.tryToInstanceDeployActor("hydra.cluster.container.Container", address, systems(0), "ContainerApp")
       val osString = System.getProperty("os.name")
-      var appConfigString =""
-      if(osString.toLowerCase().startsWith("win")){
-        appConfigString =
-          """
-            |{
-            | "appname": "appTest",
-            | "startcmd":["python demo/app.py"],
-            | "prestartcmd":[]
-            |}
-          """.stripMargin
-      }else{
-        appConfigString =
-          """
-            |{
-            | "appname": "appTest",
-            | "startcmd":["python demo/app.py"],
-            | "prestartcmd":[]
-            |}
-          """.stripMargin
-      }
+      var appConfigString =TestCons.pythonTestConfig
+
       Thread.sleep(1000)
       actorRef map {
         appref => appref ! InitialMsg(appConfigString)

@@ -32,6 +32,7 @@ class Container extends Actor with ActorLogging {
   var healthIndex = 0
   lazy val containerAddress = Cluster(context.system).selfAddress
   lazy val osString = System.getProperty("os.name")
+  var healthCheckEndpoint = "http://localhost:9000/hello"
 
   var cancellable: Option[Cancellable] = None
 
@@ -43,7 +44,7 @@ class Container extends Actor with ActorLogging {
   def doHealthCheck(): Boolean = {
     var response: HttpResponse[String] = null
     try {
-      response = Http("http://localhost:5000/health").asString
+      response = Http(healthCheckEndpoint).asString
     }
     catch {
       case _: Throwable => response = null
@@ -78,6 +79,9 @@ class Container extends Actor with ActorLogging {
         } else {
           startCmd = "bash" :: "-c" :: startcmd
         }
+    }
+    (configJson \AppRequst.healthcheck).asOpt[String]map{
+      healthCheckStr=> healthCheckEndpoint = healthCheckStr
     }
   }
 

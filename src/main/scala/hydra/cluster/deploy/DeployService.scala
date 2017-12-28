@@ -13,6 +13,7 @@ import hydra.cluster.common.DeployService.DeployReq
 import scala.util.Random
 import akka.cluster.Cluster
 import hydra.cluster.Cons.{AppRequst, HydraConfig, HydraTopic}
+import hydra.cluster.Log.HydraLogger
 import hydra.cluster.data.ApplicationListManager
 
 /**
@@ -68,7 +69,7 @@ class DeployService extends Actor with ActorLogging {
   }
 }
 
-object DeployService {
+object DeployService extends HydraLogger{
 
   // final case class DeployReq(appconfigString: String)
 
@@ -86,7 +87,7 @@ object DeployService {
       val actorRef = system.actorOf(Props(clazz).withDeploy(Deploy(scope = RemoteScope(address))), actorName)
       Some(actorRef)
     } catch {
-      case ex: Throwable => println("Actor Failed " + ex.getMessage() + " " + ex.getStackTrace)
+      case ex: Throwable => logger.error("Actor Failed " + ex.getMessage() + " " + ex.getStackTrace)
         None
     }
   }

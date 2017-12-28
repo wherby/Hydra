@@ -10,4 +10,5 @@ object AppRequst {
   val startcmd = "startcmd"
   val scheduler = "scheduler"
   val container = "container"
+  val healthcheck = "healthcheck"
 }

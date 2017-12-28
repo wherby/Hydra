@@ -5,7 +5,7 @@ import sbt._
 import Keys._
 import sbtassembly.AssemblyPlugin.autoImport._
 
-val akkaVersion = "2.5.4"
+val akkaVersion = "2.5.8"
 
 lazy val appResolvers = Seq(
   "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
@@ -30,10 +30,16 @@ lazy val `hydra-cluster-scala` = project
       "com.typesafe.akka" %% "akka-cluster-tools" % akkaVersion,
       "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaVersion,
       "com.typesafe.akka" %% "akka-distributed-data" % akkaVersion,
+      "com.typesafe.akka" %% "akka-http"   % "10.1.0-RC1",
+      "com.typesafe.akka" %% "akka-stream" % akkaVersion, // or whatever the latest version is
+      "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2",
+      "ch.qos.logback" % "logback-classic" % "1.2.3",
       "org.scalatest" %% "scalatest" % "3.0.1" % Test,
       "com.typesafe.play" %% "play-json" % "2.6.6",
       "org.scalaj" %% "scalaj-http" % "2.3.0",
-      "io.github.wherby"%%"hydracommon"%"0.1.1-SNAPSHOT",
+      "io.spray" %%  "spray-json" % "1.3.3", // for json format in akka http
+      "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.0-RC1",
+      "io.github.wherby"%%"hydracommon"%"0.1.1",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
     fork in run := true,
     mainClass in (Compile, run) := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),
