@@ -4,6 +4,7 @@ import com.typesafe.config.ConfigFactory
 import akka.actor.{ActorSystem, PoisonPill, Props}
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
 import hydra.cluster.Cons.HydraConfig
+import hydra.cluster.WebServer.HydraWebServer
 import hydra.cluster.deploy.DeployService
 
 /**
@@ -13,14 +14,15 @@ import hydra.cluster.deploy.DeployService
 object SimpleClusterApp {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
-      startup(Seq("2551"))
+      val port = HydraConfig.load().getString("akka.remote.netty.tcp.port")
+      startup(Seq(port))
     }
     else
       startup(args)
   }
 
   def startup(ports: Seq[String]): Seq[ActorSystem] = {
-    ports map { port =>
+    val systems= ports map { port =>
       // Override the configuration of the port
       val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port)
           .withFallback(HydraConfig.load())
@@ -45,6 +47,11 @@ object SimpleClusterApp {
 
       system
     }
+    val config = HydraConfig.load()
+    config.getBoolean("hydra.web.enable") match {
+      case true => HydraWebServer.createWebServer(systems(0))
+    }
+    systems
   }
   def simpleStartup(ports: Seq[String]): Seq[ActorSystem] = {
     ports map { port =>

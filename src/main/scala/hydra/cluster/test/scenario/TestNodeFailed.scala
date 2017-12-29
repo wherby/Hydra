@@ -2,7 +2,8 @@ package hydra.cluster.test.scenario
 
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import hydra.cluster.ClusterListener.SimpleClusterApp
-import hydra.cluster.common.msg.DeployService.DeployReq
+import hydra.cluster.common.DeployService.DeployReq
+import hydra.cluster.test.TestCons
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 14/10/2017.
@@ -12,27 +13,7 @@ object TestNodeFailed {
     if (args.isEmpty) {
       val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0" ))
       val osString = System.getProperty("os.name")
-      var appConfigString =""
-      if(osString.toLowerCase().startsWith("win")){
-        appConfigString =
-          """
-            |{
-            | "appname": "appTest",
-            | "startcmd":["python demo/app.py"],
-            | "prestartcmd":[]
-            |}
-          """.stripMargin
-      }else{
-        appConfigString =
-          """
-            |{
-            | "appname": "appTest",
-            | "startcmd":["python demo/app.py"],
-            | "prestartcmd":[]
-            |}
-          """.stripMargin
-      }
-
+      var appConfigString =TestCons.pythonTestConfig
       val deployServiceProxy = systems(0).actorOf(ClusterSingletonProxy.props(
         singletonManagerPath = "/user/deployservice",
         settings = ClusterSingletonProxySettings(systems(0))),

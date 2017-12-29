@@ -1,18 +1,22 @@
 package hydra.cluster.data
 
 import akka.actor.Address
+import hydra.cluster.Cons.AppRequst
+import hydra.cluster.Log.HydraLogger
+import play.api.libs.json.Json
 
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.
   */
-class ApplicationList extends ApplicationListTrait{
+class ApplicationList extends ApplicationListTrait with AppListTrait with HydraLogger{
   import scala.collection.mutable.Map
-  var systemlist:Map[Address,List[String]] = Map()
+  val systemlist:Map[Address,List[String]] = Map()
+
   def addSystem(address:Address) ={
     systemlist.get(address) match {
       case Some(value) =>
-      case None => systemlist= systemlist +(address-> List())
+      case None => systemlist(address)= List()
     }
   }
 
@@ -21,19 +25,37 @@ class ApplicationList extends ApplicationListTrait{
       case Some(value) => systemlist.remove(address)
       case None =>
     }
+    appList.keys.map{
+      key => appList(key) = appList(key).filter(_ != address)
+    }
   }
 
   def addApplicationToSystem(address: Address,app:String)={
     systemlist.get(address) match {
       case Some(value)=> systemlist(address) =systemlist(address):::List(app)
-      case None => systemlist +(address->List(app))
+      case None => systemlist(address)= List(app)
+    }
+    val appName = (Json.parse(app) \ AppRequst.appname).asOpt[String]
+    appName match {
+      case Some(appName) =>appList.get(appName) match {
+        case Some(value) => appList(appName) = appList(appName) ::: List(address)
+        case None =>appList(appName)=  List(address)
+      }
+      case _=>
     }
   }
 
   def removeApplicationFromSystem(address: Address, app:String)={
     systemlist.get(address) match {
       case Some(value) => systemlist(address) = systemlist(address).filter(_ != app)
-      case None => systemlist + (address-> List())
+      case None =>systemlist(address) =  List()
+    }
+    val appName = (Json.parse(app) \ AppRequst.appname).asOpt[String]
+    appName match {
+      case Some(appName) => appList.get(appName) match {
+        case Some(value) => appList(appName) =appList(appName).filter(_ !=address)
+        case None => appList(appName)=  List()
+      }
     }
   }
 
@@ -44,13 +66,6 @@ class ApplicationList extends ApplicationListTrait{
 
 object ApplicationList {
   def main(args: Array[String]): Unit = {
-    val applist= new ApplicationList()
-    val add =new Address("akka.tcp","localhost")
-    applist.addSystem(add)
-    applist.addApplicationToSystem(add,"app1")
-    applist.addApplicationToSystem(add,"app2")
-    println(applist.getApplication())
-    applist.removeApplicationFromSystem(add,"app1")
-    println(applist.getApplication())
+
   }
 }

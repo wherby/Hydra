@@ -1,14 +1,15 @@
 package hydra.cluster.container
 
-import akka.actor.{Actor, ActorLogging, Cancellable}
+import akka.actor.{Actor, ActorLogging, Cancellable, PoisonPill}
 import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import hydra.cluster.Cons.{AppRequst, HydraTopic}
 import hydra.cluster.container.Container._
-import hydra.cluster.deploy.DeployService.{UnDeployMsg}
+import hydra.cluster.deploy.DeployService.UnDeployMsg
 import play.api.libs.json.Json
-import hydra.cluster.common.msg.DeployService.DeployReq
+import hydra.cluster.common.DeployService.DeployReq
+
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.sys.process._
@@ -32,6 +33,7 @@ class Container extends Actor with ActorLogging {
   var healthIndex = 0
   lazy val containerAddress = Cluster(context.system).selfAddress
   lazy val osString = System.getProperty("os.name")
+  var healthCheckEndpoint = "http://localhost:9000/hello"
 
   var cancellable: Option[Cancellable] = None
 
@@ -43,7 +45,7 @@ class Container extends Actor with ActorLogging {
   def doHealthCheck(): Boolean = {
     var response: HttpResponse[String] = null
     try {
-      response = Http("http://localhost:5000/health").asString
+      response = Http(healthCheckEndpoint).asString
     }
     catch {
       case _: Throwable => response = null
@@ -79,6 +81,9 @@ class Container extends Actor with ActorLogging {
           startCmd = "bash" :: "-c" :: startcmd
         }
     }
+    (configJson \AppRequst.healthcheck).asOpt[String]map{
+      healthCheckStr=> healthCheckEndpoint = healthCheckStr
+    }
   }
 
 
@@ -112,7 +117,10 @@ class Container extends Actor with ActorLogging {
     case FinishMsg =>
       mediator ! Publish(HydraTopic.deployedMsg, UnDeployMsg(containerAddress, appConfig))
       log.info(s"$appname is undeployed")
-      context stop self
+      //context stop self #https://stackoverflow.com/questions/18971088/dead-letters-encountered-as-soon-as-actors-are-placed-into-router
+      context.system.scheduler.scheduleOnce(1 second) {
+        self ! PoisonPill
+      }
   }
 
   override def preRestart(reason: Throwable, message: Option[Any]): Unit = {

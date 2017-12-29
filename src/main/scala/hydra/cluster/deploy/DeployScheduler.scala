@@ -3,7 +3,7 @@ package hydra.cluster.deploy
 import akka.actor.{Actor, ActorLogging}
 import hydra.cluster.data.ApplicationListManager
 import hydra.cluster.deploy.DeployService.DeployRecipe
-import hydra.cluster.common.msg.DeployService.DeployReq
+import hydra.cluster.common.DeployService.DeployReq
 import hydra.cluster.scheduler.SchedulerTrait
 import play.api.libs.json.Json
 import akka.cluster.Cluster

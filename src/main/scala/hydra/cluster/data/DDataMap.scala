@@ -3,8 +3,8 @@ package hydra.cluster.data
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.cluster.Cluster
 import akka.cluster.ddata.Replicator._
-import akka.cluster.ddata.{DistributedData, ORMultiMap,ORMultiMapKey}
-
+import akka.cluster.ddata.{DistributedData, ORMultiMap, ORMultiMapKey}
+import hydra.cluster.Log.HydraLogger
 
 import scala.concurrent.duration._
 
@@ -12,7 +12,7 @@ import scala.concurrent.duration._
   * Created by TaoZhou(whereby@live.cn) on 15/10/2017.
   */
 
-class DDataMap extends Actor with ActorLogging {
+class DDataMap extends Actor with ActorLogging with HydraLogger{
 
   import DData._
   import scala.collection.mutable.Map
@@ -36,7 +36,7 @@ class DDataMap extends Actor with ActorLogging {
       replicator ! Get(keyData, readMajority, Some(sender()))
     case g@GetSuccess(keyData, Some(replyTo: ActorRef)) =>
       val data = g.get(keyData)
-      log.info(s"get data : $data")
+      logger.debug(s"get data : $data")
       replyTo ! data
     case NotFound(keyData, Some(replyTo: ActorRef)) =>
       replyTo ! List()
@@ -54,7 +54,7 @@ class DDataMap extends Actor with ActorLogging {
   }
 
   def updateSeqAdd(lst: ORMultiMap[String,String], key: String, value: String): ORMultiMap[String, String] = {
-    println(s"lst: $lst, $value")
+    logger.debug(s"lst: $lst, $value")
     lst.get(key) match {
       case Some(seqStr) => val seq = seqStr + value
         lst + (key -> seq)
