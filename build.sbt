@@ -39,7 +39,7 @@ lazy val `hydra-cluster-scala` = project
       "org.scalaj" %% "scalaj-http" % "2.3.0",
       "io.spray" %%  "spray-json" % "1.3.3", // for json format in akka http
       "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.0-RC1",
-      "io.github.wherby"%%"hydracommon"%"0.1.1",
+      "io.github.wherby"%%"hydracommon"%"0.1.2",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
     fork in run := true,
     mainClass in (Compile, run) := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),

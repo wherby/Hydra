@@ -14,7 +14,8 @@ import hydra.cluster.deploy.DeployService
 object SimpleClusterApp {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
-      startup(Seq("2551"))
+      val port = HydraConfig.load().getString("akka.remote.netty.tcp.port")
+      startup(Seq(port))
     }
     else
       startup(args)
