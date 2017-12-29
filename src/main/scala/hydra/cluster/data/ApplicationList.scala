@@ -39,9 +39,9 @@ class ApplicationList extends ApplicationListTrait with AppListTrait with HydraL
     appName match {
       case Some(appName) =>appList.get(appName) match {
         case Some(value) => appList(appName) = appList(appName) ::: List(address)
-        case None =>appList(appName)=  List(address)
+        case _ =>appList(appName)=  List(address)
       }
-      case _=>
+      case None=>
     }
   }
 
@@ -56,6 +56,7 @@ class ApplicationList extends ApplicationListTrait with AppListTrait with HydraL
         case Some(value) => appList(appName) =appList(appName).filter(_ !=address)
         case None => appList(appName)=  List()
       }
+      case _=>
     }
   }
 

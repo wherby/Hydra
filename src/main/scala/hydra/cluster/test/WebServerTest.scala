@@ -1,7 +1,6 @@
 package hydra.cluster.test
 
 import hydra.cluster.ClusterListener.SimpleClusterApp
-import hydra.cluster.WebServer.HydraWebServer
 
 import scalaj.http.Http
 
@@ -12,7 +11,7 @@ import scalaj.http.Http
 object WebServerTest {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
-      val systems = SimpleClusterApp.startup(Seq("2551","0","0"))
+      SimpleClusterApp.startup(Seq("2551","0","0"))
       Thread.sleep(1000)
       Http("http://localhost:9000/app").postData(TestCons.pythonTestConfig).header("content-type", "application/json").asString
       println("App started")

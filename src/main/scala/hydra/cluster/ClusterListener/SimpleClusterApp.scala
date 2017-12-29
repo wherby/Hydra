@@ -50,6 +50,7 @@ object SimpleClusterApp {
     val config = HydraConfig.load()
     config.getBoolean("hydra.web.enable") match {
       case true => HydraWebServer.createWebServer(systems(0))
+      case _=>
     }
     systems
   }

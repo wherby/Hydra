@@ -12,8 +12,7 @@ object TestNodeFailed {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
       val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0" ))
-      val osString = System.getProperty("os.name")
-      var appConfigString =TestCons.pythonTestConfig
+      val appConfigString =TestCons.pythonTestConfig
       val deployServiceProxy = systems(0).actorOf(ClusterSingletonProxy.props(
         singletonManagerPath = "/user/deployservice",
         settings = ClusterSingletonProxySettings(systems(0))),
