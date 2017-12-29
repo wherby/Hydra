@@ -37,6 +37,7 @@ There are two classes user need to rewrite to meet their needs:
 ## About release:
 
  [0.1.0](https://github.com/wherby/HydraRelease/tree/master/0.1.0)
+ 
  [0.2.0](https://github.com/wherby/HydraRelease/tree/master/0.2.0)
 
 
