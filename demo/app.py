@@ -18,7 +18,7 @@ def crash():
 
 
 if __name__ == "__main__":
-    default_host="localhost"
+    default_host="0.0.0.0"
     default_port="5000"
     # Set up the command-line options
     parser = optparse.OptionParser()
