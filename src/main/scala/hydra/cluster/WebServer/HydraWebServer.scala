@@ -65,7 +65,7 @@ object HydraWebServer extends  AppRequestFormats with HydraLogger with AppReques
             complete(hostIPs)
           }
         }
-    val hostName = config.getString("hydra.web.hostname")
+    val hostName = config.getString("akka.remote.netty.tcp.hostname")
     val port = config.getInt("hydra.web.port")
     val bindFuture = Http().bindAndHandle(route,hostName,port)
     logger.info(s"Server online at http://$hostName:$port/")
