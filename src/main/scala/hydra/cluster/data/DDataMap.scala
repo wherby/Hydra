@@ -17,7 +17,7 @@ class DDataMap extends Actor with ActorLogging with HydraLogger{
   import DData._
   import scala.collection.mutable.Map
 
-  implicit val cluster = Cluster(context.system)
+  implicit val node = Cluster(context.system)
   val replicator = DistributedData(context.system).replicator
   val timeout = 3.seconds
   val readMajority = ReadMajority(timeout)
@@ -29,6 +29,7 @@ class DDataMap extends Actor with ActorLogging with HydraLogger{
     .orElse[Any, Unit](removeItem)
     .orElse[Any, Unit](addKeyToMap)
     .orElse[Any, Unit](removeKeyFromMap)
+    .orElse[Any, Unit](receiveOther)
 
   def receiveGet: Receive = {
     case GetKey(key) =>
@@ -102,6 +103,12 @@ class DDataMap extends Actor with ActorLogging with HydraLogger{
         lst => lst - key
       }
       replicator ! update
+  }
+
+  def receiveOther: Receive = {
+    case _: UpdateSuccess[_] | _: UpdateTimeout[_] =>
+    // UpdateTimeout, will eventually be replicated
+    case e: UpdateFailure[_]                       => throw new IllegalStateException("Unexpected failure: " + e)
   }
 
 }

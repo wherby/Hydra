@@ -13,8 +13,9 @@ class DDataSet extends Actor with ActorLogging {
 
   import DData._
 
-  implicit val cluster = Cluster(context.system)
+
   val replicator = DistributedData(context.system).replicator
+  implicit val cluster = Cluster(context.system)
   val timeout = 3.seconds
   val readMajority = ReadMajority(timeout)
   val writeMajority = WriteMajority(timeout)

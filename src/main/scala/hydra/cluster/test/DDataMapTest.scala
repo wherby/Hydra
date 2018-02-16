@@ -13,7 +13,7 @@ object DDataMapTest {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
       val systems = SimpleClusterApp.simpleStartup(Seq("2551", "2552", "0"))
-      Thread.sleep(10000)
+      Thread.sleep(1000)
       systems.map{system =>
         val ddata = system.actorOf(Props[DDataMap],"ddatamap")
         ddata ! AddValueToKey("abc","a" + system.name + Random.nextInt(1000).toString)
@@ -24,6 +24,7 @@ object DDataMapTest {
         ddata ! GetKey("ab")
         ddata ! GetAllKey("ab")
       }
+      Thread.sleep(1999)
     }
     else
       SimpleClusterApp.startup(args)
