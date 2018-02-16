@@ -4,6 +4,7 @@ import com.typesafe.config.ConfigFactory
 import akka.actor.{ActorSystem, PoisonPill, Props}
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
 import hydra.cluster.Cons.HydraConfig
+import hydra.cluster.external.ExternalActorLoader
 import hydra.cluster.WebServer.HydraWebServer
 import hydra.cluster.deploy.DeployService
 
@@ -45,12 +46,19 @@ object SimpleClusterApp {
         settings = ClusterSingletonManagerSettings(system)),
         name = "aggregator")
 
+      system.actorOf(Props[ExternalActorLoader],"externalLoader")
+
       system
     }
     val config = HydraConfig.load()
     config.getBoolean("hydra.web.enable") match {
       case true => HydraWebServer.createWebServer(systems(0))
       case _=>
+    }
+    sys.ShutdownHookThread {
+      systems.map{
+        system =>system.terminate()
+      }
     }
     systems
   }
