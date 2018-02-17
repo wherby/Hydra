@@ -1,6 +1,7 @@
 package hydra.cluster.test
 
 import akka.actor.Address
+import hydra.cluster.Cons.HydraConfig
 import hydra.cluster.data.ApplicationList
 import hydra.cluster.scheduler.SimpleScheduler
 
@@ -9,9 +10,11 @@ import hydra.cluster.scheduler.SimpleScheduler
   */
 object SimpleScheduleTest {
   def main(args: Array[String]): Unit = {
+    val config = HydraConfig.load()
+    val systemname =config.getString("hydra.clustername")
     val applist = new ApplicationList()
-    val add = new Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
-    val add2 = new Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2552)
+    val add = new Address("akka.tcp", systemname, "127.0.0.1", 2551)
+    val add2 = new Address("akka.tcp", systemname, "127.0.0.1", 2552)
     applist.addSystem(add)
     applist.addSystem(add2)
     applist.addApplicationToSystem(add, TestCons.pythonTestConfig)

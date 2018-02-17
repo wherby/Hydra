@@ -23,14 +23,17 @@ object SimpleClusterApp {
   }
 
   def startup(ports: Seq[String]): Seq[ActorSystem] = {
+    val config = HydraConfig.load()
+
+    val clusterSystemName = config.getString("hydra.clustername")
     val systems= ports map { port =>
       // Override the configuration of the port
-      val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port)
+      val sysConfig = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port)
           .withFallback(HydraConfig.load())
 
 
       // Create an Akka system
-      val system = ActorSystem("ClusterSystem", config)
+      val system = ActorSystem(clusterSystemName, sysConfig)
       // Create an actor that handles cluster domain events
       system.actorOf(Props[SimpleClusterListener], name = "clusterListener")
 
@@ -50,7 +53,7 @@ object SimpleClusterApp {
 
       system
     }
-    val config = HydraConfig.load()
+
     config.getBoolean("hydra.web.enable") match {
       case true => HydraWebServer.createWebServer(systems(0))
       case _=>
@@ -63,14 +66,25 @@ object SimpleClusterApp {
     systems
   }
   def simpleStartup(ports: Seq[String]): Seq[ActorSystem] = {
-    ports map { port =>
+
+    val systems= ports map { port =>
       // Override the configuration of the port
       val config = ConfigFactory.parseString("akka.remote.netty.tcp.port=" + port).
         withFallback(HydraConfig.load())
-
+      val clusterSystemName = config.getString("hydra.clustername")
       // Create an Akka system
-      val system = ActorSystem("ClusterSystem", config)
+      val system = ActorSystem(clusterSystemName, config)
       system
+    }
+
+    systems
+  }
+
+  def startWeb(systems: Seq[ActorSystem])={
+    val config = HydraConfig.load()
+    config.getBoolean("hydra.web.enable") match {
+      case true => HydraWebServer.createWebServer(systems(1))
+      case _=>
     }
   }
 

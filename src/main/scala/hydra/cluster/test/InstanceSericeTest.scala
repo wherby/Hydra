@@ -2,6 +2,7 @@ package hydra.cluster.test
 
 import akka.actor.Address
 import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.Cons.HydraConfig
 import hydra.cluster.deploy.DeployService
 import hydra.cluster.deploy.DeployService.DeployedMsg
 
@@ -11,9 +12,11 @@ import hydra.cluster.deploy.DeployService.DeployedMsg
   */
 object InstanceSericeTest {
   def main(args: Array[String]): Unit = {
+    val config = HydraConfig.load()
+    val systemname =config.getString("hydra.clustername")
     if (args.isEmpty) {
       val systems = SimpleClusterApp.startup(Seq("2551", "2552", "0"))
-      val address = Address("akka.tcp", "ClusterSystem", "127.0.0.1", 2551)
+      val address = Address("akka.tcp", systemname, "127.0.0.1", 2551)
       val actorRef = DeployService.tryToInstanceDeployActor("hydra.cluster.deploy.DeployService", address, systems(0), "aa")
       actorRef.map {
         actorref => actorref ! DeployedMsg(address, "CCCCCC")

@@ -14,7 +14,7 @@ import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest, QueryExte
 object ExternalActorLoaderTest {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
-      val systems = SimpleClusterApp.simpleStartup(Seq("2551", "2552", "0"))
+      val systems = SimpleClusterApp.simpleStartup(Seq("2551", "2552", "2553"))
       systems.map {
         system =>
           val loader = system.actorOf(Props[ExternalActorLoader], "externalLoader")
@@ -22,8 +22,9 @@ object ExternalActorLoaderTest {
           loader ! ExternalLoaderRequest("C:\\temp\\a\\ExternalPackage.jar", "hydra.cluster.external.actors.TestActor")
           Thread.sleep(1999)
           val TestActor = system.actorSelection("/user/externalLoader/TestActor*").tell("Testaa******************** ", loader)
-          loader ! QueryExternalClass
+         // loader ! QueryExternalClass
       }
+      SimpleClusterApp.startWeb(systems)
       println("deploy python finished")
     }
     else

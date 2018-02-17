@@ -41,11 +41,11 @@ lazy val `hydra-cluster-scala` = project
       "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.0-RC1",
       "io.github.wherby"%%"hydracommon"%"0.1.2",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
-    fork in run := false,
+    fork in run := false,   //###If the value is true, Ctrl + C may only kill JVM and not kill Akka. Set to false to kill togother.
     mainClass in (Compile, run) := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),
     mainClass in assembly := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),//object with,
     // disable parallel tests
-    parallelExecution in Test := false,  //If the value is true, Ctrl + C may only kill JVM and not kill Akka. Set to false to kill togother.
+    parallelExecution in Test := false,
     resolvers ++= appResolvers,
     licenses := Seq("GPL-3.0" -> url("https://opensource.org/licenses/GPL-3.0"))
   )

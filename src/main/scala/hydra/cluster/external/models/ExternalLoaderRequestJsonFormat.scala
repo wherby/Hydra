@@ -9,5 +9,5 @@ import spray.json.DefaultJsonProtocol
   * Created by whereby[Tao Zhou](187225577@qq.com) on 2018/2/16
   */
 trait ExternalLoaderRequestJsonFormat extends SprayJsonSupport with DefaultJsonProtocol{
-  implicit  val externalLoaderRequestFormat = jsonFormat2(ExternalLoaderRequest)
+  implicit  val externalLoaderRequestFormat = jsonFormat3(ExternalLoaderRequest)
 }
