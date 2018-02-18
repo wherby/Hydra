@@ -44,16 +44,16 @@ There are two classes user need to rewrite to meet their needs:
 
 ## Download from sonatype:
 
-    https://oss.sonatype.org/content/groups/staging/io/github/wherby/
+    [https://oss.sonatype.org/content/groups/staging/io/github/wherby/](https://oss.sonatype.org/content/groups/staging/io/github/wherby/)
 
 
 ## Gitter about Hydra
 
-    https://gitter.im/wherby/Lobby
+    [https://gitter.im/wherby/Lobby](https://gitter.im/wherby/Lobby)
 
 ## More about Hydra
 
-    https://wherby.github.io/tags/#hydra
+    [https://wherby.github.io/tags/#hydra](https://wherby.github.io/tags/#hydra)
 
 
 

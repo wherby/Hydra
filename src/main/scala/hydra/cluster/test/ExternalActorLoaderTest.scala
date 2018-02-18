@@ -4,7 +4,7 @@ package hydra.cluster.test
 import akka.actor.Props
 import hydra.cluster.ClusterListener.SimpleClusterApp
 import hydra.cluster.external.ExternalActorLoader
-import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest, QueryExternalClass}
+import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest}
 
 
 /**
@@ -21,8 +21,7 @@ object ExternalActorLoaderTest {
           loader ! ExternalLoaderRequest("C:\\temp\\a\\ExternalPackage.jar", "hydra.cluster.external.actors.TestActor")
           loader ! ExternalLoaderRequest("C:\\temp\\a\\ExternalPackage.jar", "hydra.cluster.external.actors.TestActor")
           Thread.sleep(1999)
-          val TestActor = system.actorSelection("/user/externalLoader/TestActor*").tell("Testaa******************** ", loader)
-         // loader ! QueryExternalClass
+          system.actorSelection("/user/externalLoader/TestActor*").tell("Testaa******************** ", loader)
       }
       SimpleClusterApp.startWeb(systems)
       println("deploy python finished")

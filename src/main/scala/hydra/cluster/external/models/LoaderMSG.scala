@@ -7,4 +7,5 @@ package hydra.cluster.external.models
 object LoaderMSG {
   final case class ExternalLoaderRequest(jarAddress: String, className: String,address:Option[String] = None)
   final case class QueryExternalClass()
+  final case class QueryChilderen()
 }

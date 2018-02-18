@@ -7,7 +7,7 @@ import akka.cluster.Cluster
 import akka.event.LoggingAdapter
 import akka.remote.RemoteScope
 import hydra.cluster.Cons.HydraConfig
-import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest, QueryExternalClass}
+import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest, QueryChilderen, QueryExternalClass}
 
 import scala.util.Random
 
@@ -37,7 +37,7 @@ object ExternalActorLoader {
     }
     //log.info("Create Address: " + deployAddress.toString)
     try {
-      var classLoader = if (this.getClass.getClasses.contains(className)) {
+      val classLoader = if (this.getClass.getClasses.contains(className)) {
         log.info(s"$className is aready loaded.")
         this.getClass.getClassLoader
       } else {
@@ -86,6 +86,11 @@ class ExternalActorLoader extends Actor with ActorLogging {
       })
     case QueryExternalClass => log.info(externalActorList.toString())
       sender() ! externalActorList.toString()
+    case QueryChilderen => val childerenList = context.children.map{
+      child => child.path.toString
+    }
+      log.info(s"Children under $selfAddress are : $childerenList ")
+
   }
 
 }
