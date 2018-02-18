@@ -39,18 +39,18 @@ object ExternalRouter extends ExternalLoaderRequestJsonFormat with QueryChildren
         // complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
         complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, resultString))
       } ~
-        post {
-          entity(as[ExternalLoaderRequest]) { externalReq =>
-            val externalLoader: String = externalReq.address match {
-              case Some(address) => s"akka.tcp://$systemname@$address/user/externalLoader"
-              case _ => "/user/externalLoader"
-            }
-            Cluster(system).system.actorSelection(externalLoader).resolveOne().map {
-              externalLoader => externalLoader ! externalReq
-            }
-            complete("Actor created")
+      post {
+        entity(as[ExternalLoaderRequest]) { externalReq =>
+          val externalLoader: String = externalReq.address match {
+            case Some(address) => s"akka.tcp://$systemname@$address/user/externalLoader"
+            case _ => "/user/externalLoader"
           }
+          Cluster(system).system.actorSelection(externalLoader).resolveOne().map {
+            externalLoader => externalLoader ! externalReq
+          }
+          complete("Actor created")
         }
+      }
     } ~
     path("queryext") {
       post {

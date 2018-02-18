@@ -74,6 +74,12 @@ object SimpleClusterApp {
       val clusterSystemName = config.getString("hydra.clustername")
       // Create an Akka system
       val system = ActorSystem(clusterSystemName, config)
+
+      //If topic is not registered to mediator ,send topic message will send to dead letter.
+      // Create an actor that handles cluster domain events
+      system.actorOf(Props[SimpleClusterListener], name = "clusterListener")
+
+
       system
     }
 

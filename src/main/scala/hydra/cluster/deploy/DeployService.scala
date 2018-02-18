@@ -51,21 +51,25 @@ class DeployService extends Actor with ActorLogging {
     case UnDeployMsg(system, app) =>
       mediator ! Publish(HydraTopic.deployedMsg, UnDeployMsg(system, app))
     case FailedMsg(address, time) =>
-      log.info(s"Deploy serice handle fialed nod: $address")
-      val systemlist = ApplicationListManager.getApplicationList(selfAddress).systemlist
-      val appconfigList: List[String] = systemlist.get(address).getOrElse(List())
-      log.info(s"applist: $appconfigList")
-      log.info(s"systemList: $systemlist")
-      ApplicationListManager.applicationListMap.remove(address)
-      ApplicationListManager.applicationListMap.values.map {
-        applist => applist.removeSystem(address)
-      }
-      appconfigList map {
-        appconfig =>
-          log.info(s"For Node Failed the app will redeploy: $appconfig")
-          self ! DeployReq(appconfig)
-      }
+      redeployApplication(address)
     case _ =>
+  }
+
+  private def redeployApplication(address: Address) = {
+    log.info(s"Deploy serice handle fialed nod: $address")
+    val systemlist = ApplicationListManager.getApplicationList(selfAddress).systemlist
+    val appconfigList: List[String] = systemlist.get(address).getOrElse(List())
+    log.info(s"applist: $appconfigList")
+    log.info(s"systemList: $systemlist")
+    ApplicationListManager.applicationListMap.remove(address)
+    ApplicationListManager.applicationListMap.values.map {
+      applist => applist.removeSystem(address)
+    }
+    appconfigList map {
+      appconfig =>
+        log.info(s"For Node Failed the app will redeploy: $appconfig")
+        self ! DeployReq(appconfig)
+    }
   }
 }
 

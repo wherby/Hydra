@@ -15,6 +15,7 @@ object ExternalActorLoaderTest {
   def main(args: Array[String]): Unit = {
     if (args.isEmpty) {
       val systems = SimpleClusterApp.simpleStartup(Seq("2551", "2552", "2553"))
+      Thread.sleep(1000)
       systems.map {
         system =>
           val loader = system.actorOf(Props[ExternalActorLoader], "externalLoader")

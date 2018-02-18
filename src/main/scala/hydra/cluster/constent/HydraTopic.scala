@@ -7,4 +7,5 @@ object HydraTopic {
   val deployReq = "hydra.deployreq"
   val nodeFail = "hydra.nodefailed"
   val deployedMsg = "hydra.deployed"
+  val deployExternalActor = "hydra.deployexternalactor"
 }

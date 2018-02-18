@@ -17,8 +17,7 @@ object ContainerTest {
       val systems = SimpleClusterApp.startup(Seq("2551", "2552", "2553"))
       val address = Address("akka.tcp", systemname, "127.0.0.1", 2551)
       val actorRef = DeployService.tryToInstanceDeployActor("hydra.cluster.container.Container", address, systems(0), "ContainerApp")
-      val osString = System.getProperty("os.name")
-      var appConfigString =TestCons.pythonTestConfig
+      val appConfigString =TestCons.pythonTestConfig
 
       Thread.sleep(1000)
       actorRef map {

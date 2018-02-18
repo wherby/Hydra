@@ -4,10 +4,12 @@ import java.io.File
 
 import akka.actor.{Actor, ActorContext, ActorLogging, ActorRef, Address, Deploy, Props}
 import akka.cluster.Cluster
+import akka.cluster.pubsub.DistributedPubSub
+import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import akka.event.LoggingAdapter
 import akka.remote.RemoteScope
-import hydra.cluster.constent.HydraConfig
-import hydra.cluster.external.models.LoaderMSG.{DeleteChildren, ExternalLoaderRequest, QueryChildren, QueryExternalClass}
+import hydra.cluster.constent.{HydraConfig, HydraTopic}
+import hydra.cluster.external.models.LoaderMSG._
 import play.api.libs.json.Json
 
 import scala.util.Random
@@ -77,6 +79,7 @@ class ExternalActorLoader extends Actor with ActorLogging {
   val externalActorList: Map[String, ActorRef] = Map()
   lazy val config = HydraConfig.load()
   val selfAddress = Cluster(context.system).selfAddress
+  val mediator = DistributedPubSub(context.system).mediator
 
   override def receive: Receive = {
     case msg: ExternalLoaderRequest =>
@@ -84,6 +87,8 @@ class ExternalActorLoader extends Actor with ActorLogging {
       actorRef.map(actorRef => {
         val path = actorRef.path.toString
         externalActorList(path) = actorRef
+        mediator ! Publish(HydraTopic.deployExternalActor,
+          DeployExternalActor(selfAddress,msg.jarAddress,msg.className,path))
       })
     case QueryExternalClass => log.info(externalActorList.toString())
       sender() ! externalActorList.toString()
@@ -97,6 +102,7 @@ class ExternalActorLoader extends Actor with ActorLogging {
         context.stop(actorRef)
         log.info("Stop the Actor : " + actorRef.path.toString)
         externalActorList.remove(actorName)
+        mediator ! Publish(HydraTopic.deployExternalActor, RemoveExternalActor(selfAddress,actorName))
     }
   }
 

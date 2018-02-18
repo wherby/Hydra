@@ -9,25 +9,30 @@ import hydra.cluster.eventlistener.Aggregator.FailedMsgReport
 import hydra.cluster.constent.{HydraTopic, Roles}
 import hydra.cluster.data.{ApplicationListManager, ApplicationListTrait}
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
+import hydra.cluster.external.models.LoaderMSG.{DeployExternalActor, ExternalActorRecord, RemoveExternalActor}
+import play.api.libs.json.Json
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.
   */
 
-class SimpleClusterListener extends Actor with ActorLogging {
+class SimpleClusterListener extends Actor with ActorLogging{
 
   import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 
   val cluster = Cluster(context.system)
   val selfAddress = Cluster(context.system).selfAddress
   val applicationList: ApplicationListTrait = ApplicationListManager.getApplicationList(selfAddress)
+  val externalActorList: ApplicationListTrait = ApplicationListManager.getExternalList(selfAddress)
   val mediator = DistributedPubSub(context.system).mediator
   val aggregatorProxy = context.system.actorOf(ClusterSingletonProxy.props(
     singletonManagerPath = "/user/aggregator",
     settings = ClusterSingletonProxySettings(context.system)),
     name = "aggregatorProxy")
   mediator ! Subscribe(HydraTopic.deployedMsg, self)
-
+  //Subscribe external actor message
+  mediator ! Subscribe(HydraTopic.deployExternalActor,self)
+  implicit val externalActorRecordFormat = Json.format[ExternalActorRecord]
   // subscribe to cluster changes, re-subscribe when restart 
   override def preStart(): Unit = {
     cluster.subscribe(self, initialStateMode = InitialStateAsEvents,
@@ -58,6 +63,13 @@ class SimpleClusterListener extends Actor with ActorLogging {
     case UnDeployMsg(address, app) =>
       applicationList.removeApplicationFromSystem(address, app)
       log.info("Member Status after undeploy: {}", applicationList.getApplication())
+    // For ExternalActor Event:
+    case DeployExternalActor(address,jarAddress,className,actorName)=>
+      val external = Json.toJson(ExternalActorRecord(jarAddress,className,actorName)).toString()
+      log.info(s"Record DeployExternal Actor to :$address with $external")
+      externalActorList.addApplicationToSystem(address,external)
+    case RemoveExternalActor(address,actorMame)=>
+      log.info(s"Remove $actorMame from $address")
     case _: MemberEvent => // ignore
   }
 }
