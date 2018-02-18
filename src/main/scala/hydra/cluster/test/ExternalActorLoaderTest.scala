@@ -2,9 +2,9 @@ package hydra.cluster.test
 
 
 import akka.actor.Props
-import hydra.cluster.eventlistener.SimpleClusterApp
+import hydra.cluster.app.SimpleClusterApp
 import hydra.cluster.external.ExternalActorLoader
-import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest}
+import hydra.cluster.external.models.LoaderMSG.ExternalLoaderRequest
 
 
 /**

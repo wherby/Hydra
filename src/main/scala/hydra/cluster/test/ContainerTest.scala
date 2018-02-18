@@ -1,9 +1,9 @@
 package hydra.cluster.test
 
 import akka.actor.Address
+import hydra.cluster.app.SimpleClusterApp
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService
-import hydra.cluster.eventlistener.SimpleClusterApp
 import hydra.cluster.constent.HydraConfig
 
 /**

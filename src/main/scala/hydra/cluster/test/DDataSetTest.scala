@@ -1,8 +1,9 @@
 package hydra.cluster.test
 
-import akka.actor.{Props}
-import hydra.cluster.eventlistener.SimpleClusterApp
-import hydra.cluster.data.{DDataSet}
+import akka.actor.Props
+import hydra.cluster.app.SimpleClusterApp
+import hydra.cluster.data.DDataSet
+
 import scala.util.Random
 
 /**

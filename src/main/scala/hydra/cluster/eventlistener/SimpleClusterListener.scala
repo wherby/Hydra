@@ -7,7 +7,7 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
 import hydra.cluster.eventlistener.Aggregator.FailedMsgReport
 import hydra.cluster.constent.{HydraTopic, Roles}
-import hydra.cluster.data.{ApplicationListManager, ApplicationListTrait}
+import hydra.cluster.data.{ApplicationListManager, ApplicationListTrait, ExternalActorListTrait}
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 import hydra.cluster.external.models.LoaderMSG.{DeployExternalActor, ExternalActorRecord, RemoveExternalActor}
 import play.api.libs.json.Json
@@ -23,7 +23,7 @@ class SimpleClusterListener extends Actor with ActorLogging{
   val cluster = Cluster(context.system)
   val selfAddress = Cluster(context.system).selfAddress
   val applicationList: ApplicationListTrait = ApplicationListManager.getApplicationList(selfAddress)
-  val externalActorList: ApplicationListTrait = ApplicationListManager.getExternalList(selfAddress)
+  val externalActorList: ExternalActorListTrait = ApplicationListManager.getExternalList(selfAddress)
   val mediator = DistributedPubSub(context.system).mediator
   val aggregatorProxy = context.system.actorOf(ClusterSingletonProxy.props(
     singletonManagerPath = "/user/aggregator",
@@ -69,7 +69,16 @@ class SimpleClusterListener extends Actor with ActorLogging{
       log.info(s"Record DeployExternal Actor to :$address with $external")
       externalActorList.addApplicationToSystem(address,external)
     case RemoveExternalActor(address,actorMame)=>
-      log.info(s"Remove $actorMame from $address")
+      val allList = externalActorList.getApplicationList(address)
+      allList.map{
+        actorStr=> val actorJson = (Json.parse(actorStr) \ "actorName").asOpt[String] map {
+          actorNameStr=> if(actorMame == actorNameStr) {
+            log.info(s"Remove $actorMame from record at $address")
+            externalActorList.removeApplicationFromSystem(address,actorStr)
+            log.info("After remove record is : " + externalActorList.getApplicationList(address))
+          }
+        }
+      }
     case _: MemberEvent => // ignore
   }
 }

@@ -1,12 +1,13 @@
-package hydra.cluster.eventlistener
+package hydra.cluster.app
 
-import com.typesafe.config.ConfigFactory
 import akka.actor.{ActorSystem, PoisonPill, Props}
 import akka.cluster.singleton.{ClusterSingletonManager, ClusterSingletonManagerSettings}
+import com.typesafe.config.ConfigFactory
 import hydra.cluster.constent.HydraConfig
+import hydra.cluster.deploy.DeployService
+import hydra.cluster.eventlistener.{Aggregator, SimpleClusterListener}
 import hydra.cluster.external.ExternalActorLoader
 import hydra.cluster.web.HydraWebServer
-import hydra.cluster.deploy.DeployService
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.

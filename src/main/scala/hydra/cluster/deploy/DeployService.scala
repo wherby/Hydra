@@ -14,7 +14,7 @@ import scala.util.Random
 import akka.cluster.Cluster
 import hydra.cluster.constent.{AppRequst, HydraConfig, HydraTopic}
 import hydra.cluster.logger.HydraLogger
-import hydra.cluster.data.ApplicationListManager
+import hydra.cluster.data.{ApplicationListManager, ExternalActorListTrait}
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 26/09/2017.
@@ -55,8 +55,14 @@ class DeployService extends Actor with ActorLogging {
     case _ =>
   }
 
+  private def redeployExternalActor(address: Address): Unit ={
+    log.info(s"Deploy service handle failed node: $address  for External actor")
+    val systemlist = ApplicationListManager.getApplicationList(selfAddress).systemlist
+    val externalActorList: ExternalActorListTrait = ApplicationListManager.getExternalList(selfAddress)
+  }
+
   private def redeployApplication(address: Address) = {
-    log.info(s"Deploy serice handle fialed nod: $address")
+    log.info(s"Deploy serice handle fialed node: $address")
     val systemlist = ApplicationListManager.getApplicationList(selfAddress).systemlist
     val appconfigList: List[String] = systemlist.get(address).getOrElse(List())
     log.info(s"applist: $appconfigList")
