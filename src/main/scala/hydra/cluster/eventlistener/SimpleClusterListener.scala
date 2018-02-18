@@ -1,12 +1,12 @@
-package hydra.cluster.ClusterListener
+package hydra.cluster.eventlistener
 
 import akka.cluster.Cluster
 import akka.cluster.ClusterEvent._
 import akka.actor.{Actor, ActorLogging}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
-import hydra.cluster.ClusterListener.Aggregator.FailedMsgReport
-import hydra.cluster.Cons.{HydraTopic, Roles}
+import hydra.cluster.eventlistener.Aggregator.FailedMsgReport
+import hydra.cluster.constent.{HydraTopic, Roles}
 import hydra.cluster.data.{ApplicationListManager, ApplicationListTrait}
 import hydra.cluster.deploy.DeployService.{DeployedMsg, UnDeployMsg}
 

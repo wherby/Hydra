@@ -1,8 +1,8 @@
 package hydra.cluster.test
 
 import akka.actor.Address
-import hydra.cluster.ClusterListener.SimpleClusterApp
-import hydra.cluster.Cons.HydraConfig
+import hydra.cluster.eventlistener.SimpleClusterApp
+import hydra.cluster.constent.HydraConfig
 import hydra.cluster.deploy.DeployService
 import hydra.cluster.deploy.DeployService.DeployedMsg
 

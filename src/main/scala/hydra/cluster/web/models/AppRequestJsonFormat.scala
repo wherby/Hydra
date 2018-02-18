@@ -1,4 +1,4 @@
-package hydra.cluster.WebServer.models
+package hydra.cluster.web.models
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 /**

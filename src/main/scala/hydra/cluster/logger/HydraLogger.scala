@@ -1,4 +1,4 @@
-package hydra.cluster.Log
+package hydra.cluster.logger
 
 import com.typesafe.scalalogging.LazyLogging
 

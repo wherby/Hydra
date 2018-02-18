@@ -1,7 +1,7 @@
 package hydra.cluster.test
 
 import akka.actor.{Props}
-import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.eventlistener.SimpleClusterApp
 import hydra.cluster.data.{DDataMap}
 import scala.util.Random
 

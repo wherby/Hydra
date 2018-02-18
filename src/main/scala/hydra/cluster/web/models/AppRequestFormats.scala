@@ -1,4 +1,4 @@
-package hydra.cluster.WebServer.models
+package hydra.cluster.web.models
 import play.api.libs.json._
 
 /**

@@ -1,8 +1,8 @@
 package hydra.cluster.data
 
 import akka.actor.Address
-import hydra.cluster.Cons.AppRequst
-import hydra.cluster.Log.HydraLogger
+import hydra.cluster.constent.AppRequst
+import hydra.cluster.logger.HydraLogger
 import play.api.libs.json.Json
 
 

@@ -3,8 +3,8 @@ package hydra.cluster.test
 import akka.actor.Address
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService
-import hydra.cluster.ClusterListener.SimpleClusterApp
-import hydra.cluster.Cons.HydraConfig
+import hydra.cluster.eventlistener.SimpleClusterApp
+import hydra.cluster.constent.HydraConfig
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 10/10/2017.

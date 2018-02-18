@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Address, Deploy, 
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
 import akka.remote.RemoteScope
-import hydra.cluster.ClusterListener.Aggregator.FailedMsg
+import hydra.cluster.eventlistener.Aggregator.FailedMsg
 import hydra.cluster.container.Container.InitialMsg
 import hydra.cluster.deploy.DeployService.{DeployRecipe, DeployedMsg, UnDeployMsg}
 import play.api.libs.json.Json
@@ -12,8 +12,8 @@ import hydra.cluster.common.DeployService.DeployReq
 
 import scala.util.Random
 import akka.cluster.Cluster
-import hydra.cluster.Cons.{AppRequst, HydraConfig, HydraTopic}
-import hydra.cluster.Log.HydraLogger
+import hydra.cluster.constent.{AppRequst, HydraConfig, HydraTopic}
+import hydra.cluster.logger.HydraLogger
 import hydra.cluster.data.ApplicationListManager
 
 /**

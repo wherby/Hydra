@@ -1,7 +1,7 @@
 package hydra.cluster.test
 
 import akka.actor.Address
-import hydra.cluster.Cons.HydraConfig
+import hydra.cluster.constent.HydraConfig
 import hydra.cluster.data.ApplicationList
 import hydra.cluster.scheduler.SimpleScheduler
 

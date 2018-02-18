@@ -6,8 +6,9 @@ import akka.actor.{Actor, ActorContext, ActorLogging, ActorRef, Address, Deploy,
 import akka.cluster.Cluster
 import akka.event.LoggingAdapter
 import akka.remote.RemoteScope
-import hydra.cluster.Cons.HydraConfig
-import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest, QueryChilderen, QueryExternalClass}
+import hydra.cluster.constent.HydraConfig
+import hydra.cluster.external.models.LoaderMSG.{DeleteChildren, ExternalLoaderRequest, QueryChildren, QueryExternalClass}
+import play.api.libs.json.Json
 
 import scala.util.Random
 
@@ -86,11 +87,17 @@ class ExternalActorLoader extends Actor with ActorLogging {
       })
     case QueryExternalClass => log.info(externalActorList.toString())
       sender() ! externalActorList.toString()
-    case QueryChilderen => val childerenList = context.children.map{
+    case QueryChildren => val childerenList = context.children.map {
       child => child.path.toString
     }
       log.info(s"Children under $selfAddress are : $childerenList ")
-
+      sender() ! Json.obj("childeren" -> childerenList).toString()
+    case DeleteChildren(actorName, address) => externalActorList.get(actorName) map {
+      actorRef =>
+        context.stop(actorRef)
+        log.info("Stop the Actor : " + actorRef.path.toString)
+        externalActorList.remove(actorName)
+    }
   }
 
 }

@@ -1,4 +1,4 @@
-package hydra.cluster.WebServer
+package hydra.cluster.web
 
 
 
@@ -6,9 +6,9 @@ import akka.actor.{ ActorSystem}
 
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import hydra.cluster.Cons.HydraConfig
+import hydra.cluster.constent.HydraConfig
 
-import hydra.cluster.Log.HydraLogger
+import hydra.cluster.logger.HydraLogger
 import akka.http.scaladsl.server.Directives.{ _}
 
 /**
