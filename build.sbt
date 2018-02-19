@@ -16,7 +16,7 @@ lazy val `hydra-cluster-scala` = project
   .settings(multiJvmSettings: _*)
   .settings(
     name := "Hydra",
-    version := "0.1.0",
+    version := "0.2.1",
     organization := "io.github.wherby",
     scalaVersion := "2.12.2",
     scalacOptions in Compile ++= Seq("-deprecation", "-feature", "-unchecked", "-Xlog-reflective-calls", "-Xlint"),

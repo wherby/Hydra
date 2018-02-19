@@ -18,7 +18,7 @@ import akka.util.Timeout
 import hydra.cluster.constent.{AppRequst, HydraConfig, HydraTopic}
 import hydra.cluster.logger.HydraLogger
 import hydra.cluster.data.{ApplicationListManager, ExternalActorListTrait}
-import hydra.cluster.external.models.LoaderMSG.ExternalLoaderRequest
+import hydra.cluster.external.models.LoaderMSG.{ExternalLoaderRequest, RemoveExternalActor}
 
 import scala.concurrent.duration.Duration
 
@@ -70,6 +70,9 @@ class DeployService extends Actor with ActorLogging {
       actorStr =>
         val jarAddress = (Json.parse(actorStr) \ "jarAddress").asOpt[String]
         val className = (Json.parse(actorStr) \ "className").asOpt[String]
+        (Json.parse(actorStr) \ "actorName").asOpt[String].map{
+          actorName=> mediator ! Publish(HydraTopic.deployExternalActor, RemoveExternalActor(address,actorName))
+        }
         (jarAddress, className) match {
           case (Some(jarAddress), Some(className)) => Some(ExternalLoaderRequest(jarAddress, className, None))
           case _ => None
