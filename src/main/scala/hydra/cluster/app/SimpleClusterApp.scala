@@ -90,9 +90,23 @@ object SimpleClusterApp {
   def startWeb(systems: Seq[ActorSystem])={
     val config = HydraConfig.load()
     config.getBoolean("hydra.web.enable") match {
-      case true => HydraWebServer.createWebServer(systems(1))
+      case true => HydraWebServer.createWebServer(systems(0))
       case _=>
     }
+  }
+
+  def setupClusterService(system: ActorSystem)={
+    system.actorOf(ClusterSingletonManager.props(
+      singletonProps = Props[DeployService],
+      terminationMessage = PoisonPill,
+      settings = ClusterSingletonManagerSettings(system)),
+      name = "deployservice")
+
+    system.actorOf(ClusterSingletonManager.props(
+      singletonProps = Props[Aggregator],
+      terminationMessage = PoisonPill,
+      settings = ClusterSingletonManagerSettings(system)),
+      name = "aggregator")
   }
 
 }

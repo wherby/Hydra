@@ -1,5 +1,7 @@
 package hydra.cluster.deploy
 
+import java.util.concurrent.TimeUnit
+
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Address, Deploy, Props}
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Subscribe
@@ -12,9 +14,13 @@ import hydra.cluster.common.DeployService.DeployReq
 
 import scala.util.Random
 import akka.cluster.Cluster
+import akka.util.Timeout
 import hydra.cluster.constent.{AppRequst, HydraConfig, HydraTopic}
 import hydra.cluster.logger.HydraLogger
 import hydra.cluster.data.{ApplicationListManager, ExternalActorListTrait}
+import hydra.cluster.external.models.LoaderMSG.ExternalLoaderRequest
+
+import scala.concurrent.duration.Duration
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 26/09/2017.
@@ -52,13 +58,43 @@ class DeployService extends Actor with ActorLogging {
       mediator ! Publish(HydraTopic.deployedMsg, UnDeployMsg(system, app))
     case FailedMsg(address, time) =>
       redeployApplication(address)
+      redeployExternalActor(address)
     case _ =>
   }
 
   private def redeployExternalActor(address: Address): Unit ={
+    implicit val executionContext = context.dispatcher
     log.info(s"Deploy service handle failed node: $address  for External actor")
-    val systemlist = ApplicationListManager.getApplicationList(selfAddress).systemlist
     val externalActorList: ExternalActorListTrait = ApplicationListManager.getExternalList(selfAddress)
+    val externalActorToBeRedeploy = externalActorList.getApplicationList(address).map {
+      actorStr =>
+        val jarAddress = (Json.parse(actorStr) \ "jarAddress").asOpt[String]
+        val className = (Json.parse(actorStr) \ "className").asOpt[String]
+        (jarAddress, className) match {
+          case (Some(jarAddress), Some(className)) => Some(ExternalLoaderRequest(jarAddress, className, None))
+          case _ => None
+        }
+    }.flatten
+    log.info(s"Actor to be deploy on $address is $externalActorToBeRedeploy")
+    val allAvailbleSystem = ApplicationListManager.getApplicationList(selfAddress).systemlist.keys.toList.filter(add => add !=address)
+    externalActorList.removeSystem(address)
+    //Use random deploy strategy for redeploy
+    log.info(s"Available systems : $allAvailbleSystem")
+    val count = allAvailbleSystem.length
+    var cnt = 0
+    implicit val timeout = Timeout(Duration(5, TimeUnit.SECONDS))
+    if(count >0){
+      for( atorLoaderRequest <- externalActorToBeRedeploy){
+        val addressTemp = allAvailbleSystem(cnt % count)
+        cnt = cnt +1
+        val address = addressTemp.host.getOrElse("localhost") + ":" + addressTemp.port.getOrElse(2551).toString
+        val systemname = config.getString("hydra.clustername")
+        val externalLoader: String = s"akka.tcp://$systemname@$address/user/externalLoader"
+        context.actorSelection(externalLoader).resolveOne().map {
+          externalLoader => externalLoader ! atorLoaderRequest
+        }
+      }
+    }
   }
 
   private def redeployApplication(address: Address) = {
