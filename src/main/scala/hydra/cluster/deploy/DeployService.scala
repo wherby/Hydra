@@ -84,7 +84,7 @@ class DeployService extends Actor with ActorLogging {
     //Use random deploy strategy for redeploy
     log.info(s"Available systems : $allAvailbleSystem")
     val count = allAvailbleSystem.length
-    var cnt = 0
+    var cnt = Random.nextInt(1999) 
     implicit val timeout = Timeout(Duration(5, TimeUnit.SECONDS))
     if(count >0){
       for( atorLoaderRequest <- externalActorToBeRedeploy){
