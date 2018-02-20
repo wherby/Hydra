@@ -33,6 +33,7 @@ There are two classes user need to rewrite to meet their needs:
 
  1. [Container](./Docs/Container.md)  
  2. [Scheduler](./Docs/Scheduler.md)
+ 3. [External Actor Load](./Docs/ExternalActorLoad.md)
 
 ## About release:
 
@@ -40,19 +41,21 @@ There are two classes user need to rewrite to meet their needs:
  
  [0.2.0](https://github.com/wherby/HydraRelease/tree/master/0.2.0)
 
+ [0.2.1](https://github.com/wherby/HydraRelease/tree/master/0.2.1)
+
 
 ## Download from sonatype:
 
-    https://oss.sonatype.org/content/groups/staging/io/github/wherby/
+[sonatype repos](https://oss.sonatype.org/content/groups/staging/io/github/wherby/)
 
 
 ## Gitter about Hydra
 
-    https://gitter.im/wherby/Lobby
+[gitter Lobby](https://gitter.im/wherby/Lobby)
 
 ## More about Hydra
 
-    https://wherby.github.io/tags/#hydra
+[Hydra tags](https://wherby.github.io/tags/#hydra)
 
 
 

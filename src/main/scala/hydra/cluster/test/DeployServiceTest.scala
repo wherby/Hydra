@@ -1,8 +1,8 @@
 package hydra.cluster.test
 
 import akka.cluster.singleton._
-import  hydra.cluster.common.DeployService.DeployReq
-import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.app.SimpleClusterApp
+import hydra.cluster.common.DeployService.DeployReq
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 13/10/2017.

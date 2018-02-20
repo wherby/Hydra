@@ -1,15 +1,15 @@
 package hydra.cluster.data
 
 import akka.actor.Address
-import hydra.cluster.Cons.AppRequst
-import hydra.cluster.Log.HydraLogger
+import hydra.cluster.constent.AppRequst
+import hydra.cluster.logger.HydraLogger
 import play.api.libs.json.Json
 
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 25/09/2017.
   */
-class ApplicationList extends ApplicationListTrait with AppListTrait with HydraLogger{
+class ApplicationList extends ExternalActorListTrait with AppListTrait with HydraLogger{
   import scala.collection.mutable.Map
   val systemlist:Map[Address,List[String]] = Map()
 
@@ -62,6 +62,10 @@ class ApplicationList extends ApplicationListTrait with AppListTrait with HydraL
 
   def getApplication():String={
     systemlist.toString()
+  }
+
+  def getApplicationList(address: Address): List[String] = {
+    systemlist.get(address).getOrElse(List())
   }
 }
 

@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, ActorRef}
 import akka.cluster.Cluster
 import akka.cluster.ddata.Replicator._
 import akka.cluster.ddata.{DistributedData, ORMultiMap, ORMultiMapKey}
-import hydra.cluster.Log.HydraLogger
+import hydra.cluster.logger.HydraLogger
 
 import scala.concurrent.duration._
 

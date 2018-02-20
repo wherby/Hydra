@@ -1,9 +1,9 @@
 package hydra.cluster.test
 
-import akka.actor.{Address}
-import akka.cluster.singleton.{ ClusterSingletonProxy, ClusterSingletonProxySettings}
-import hydra.cluster.ClusterListener.Aggregator.{ FailedMsgReport}
-import hydra.cluster.ClusterListener.{ SimpleClusterApp}
+import akka.actor.Address
+import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
+import hydra.cluster.app.SimpleClusterApp
+import hydra.cluster.eventlistener.Aggregator.FailedMsgReport
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 13/10/2017.

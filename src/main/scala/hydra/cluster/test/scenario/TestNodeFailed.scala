@@ -1,7 +1,7 @@
 package hydra.cluster.test.scenario
 
 import akka.cluster.singleton.{ClusterSingletonProxy, ClusterSingletonProxySettings}
-import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.app.SimpleClusterApp
 import hydra.cluster.common.DeployService.DeployReq
 import hydra.cluster.test.TestCons
 

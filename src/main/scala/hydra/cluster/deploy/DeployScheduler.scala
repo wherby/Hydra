@@ -7,7 +7,7 @@ import hydra.cluster.common.DeployService.DeployReq
 import hydra.cluster.scheduler.SchedulerTrait
 import play.api.libs.json.Json
 import akka.cluster.Cluster
-import hydra.cluster.Cons.{AppRequst, HydraConfig}
+import hydra.cluster.constent.{AppRequst, HydraConfig}
 
 /**
   * Created by TaoZhou(whereby@live.cn) on 13/10/2017.

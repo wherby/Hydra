@@ -16,7 +16,7 @@ lazy val `hydra-cluster-scala` = project
   .settings(multiJvmSettings: _*)
   .settings(
     name := "Hydra",
-    version := "0.2.0",
+    version := "0.2.1",
     organization := "io.github.wherby",
     scalaVersion := "2.12.2",
     scalacOptions in Compile ++= Seq("-deprecation", "-feature", "-unchecked", "-Xlog-reflective-calls", "-Xlint"),
@@ -41,9 +41,9 @@ lazy val `hydra-cluster-scala` = project
       "com.typesafe.akka" %% "akka-http-spray-json" % "10.1.0-RC1",
       "io.github.wherby"%%"hydracommon"%"0.1.2",
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
-    fork in run := true,
-    mainClass in (Compile, run) := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),
-    mainClass in assembly := Some("hydra.cluster.ClusterListener.SimpleClusterApp"),//object with,
+    fork in run := false,   //###If the value is true, Ctrl + C may only kill JVM and not kill Akka. Set to false to kill togother.
+    mainClass in (Compile, run) := Some("hydra.cluster.app.SimpleClusterApp"),
+    mainClass in assembly := Some("hydra.cluster.app.SimpleClusterApp"),//object with,
     // disable parallel tests
     parallelExecution in Test := false,
     resolvers ++= appResolvers,

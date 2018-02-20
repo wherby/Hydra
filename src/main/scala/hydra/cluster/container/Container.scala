@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorLogging, Cancellable, PoisonPill}
 import akka.cluster.Cluster
 import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
-import hydra.cluster.Cons.{AppRequst, HydraTopic}
+import hydra.cluster.constent.{AppRequst, HydraTopic}
 import hydra.cluster.container.Container._
 import hydra.cluster.deploy.DeployService.UnDeployMsg
 import play.api.libs.json.Json

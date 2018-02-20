@@ -1,6 +1,6 @@
 package hydra.cluster.test
 
-import hydra.cluster.ClusterListener.SimpleClusterApp
+import hydra.cluster.app.SimpleClusterApp
 
 import scalaj.http.Http
 
