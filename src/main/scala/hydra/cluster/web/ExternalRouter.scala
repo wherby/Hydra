@@ -35,9 +35,12 @@ object ExternalRouter extends ExternalLoaderRequestJsonFormat with QueryChildren
           case msg: String => msg
           case _ => ""
         }
-        val resultString = Await.result(result, timeout.duration)
+        onComplete(result){
+          resultString => complete(resultString)
+        }
+       /* val resultString = Await.result(result, timeout.duration)
         // complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
-        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, resultString))
+        complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, resultString))*/
       } ~
       post {
         entity(as[ExternalLoaderRequest]) { externalReq =>
