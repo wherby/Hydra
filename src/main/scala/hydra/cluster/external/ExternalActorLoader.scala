@@ -8,7 +8,7 @@ import akka.cluster.pubsub.DistributedPubSub
 import akka.cluster.pubsub.DistributedPubSubMediator.Publish
 import akka.event.LoggingAdapter
 import akka.remote.RemoteScope
-import hydra.cluster.constent.{HydraConfig, HydraTopic}
+import hydra.cluster.constent.{DispatcherName, HydraConfig, HydraTopic}
 import hydra.cluster.external.models.LoaderMSG._
 import play.api.libs.json.Json
 
@@ -57,10 +57,14 @@ object ExternalActorLoader {
       log.info(s"All clazz: $allclazz")
       val clazz = Class.forName(className, true, classLoader)
       log.info("Get : " + clazz.getCanonicalName)
+      val actorMame = externalLoaderRequest.actorName match {
+        case Some(actorNameStr) => actorNameStr
+        case None=> clazz.getSimpleName + Random.nextInt()
+      }
       val actorRef = context.actorOf(Props(clazz)
-        .withDispatcher("external-dispatcher")
+        .withDispatcher(DispatcherName.externalDispatcher)
         .withDeploy(Deploy(scope = RemoteScope(deployAddress))),
-        clazz.getSimpleName + Random.nextInt())
+        actorMame)
       log.info(s"Create Actor:  " + actorRef.path.toString)
       Some(actorRef)
     } catch {

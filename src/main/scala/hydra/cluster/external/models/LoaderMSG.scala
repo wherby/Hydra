@@ -9,7 +9,7 @@ import akka.actor.Address
   */
 object LoaderMSG {
 
-  final case class ExternalLoaderRequest(jarAddress: String, className: String, address: Option[String] = None)
+  final case class ExternalLoaderRequest(jarAddress: String, className: String, address: Option[String] = None,actorName: Option[String] = None)
 
   final case class QueryExternalClass()
 

@@ -79,7 +79,7 @@ object ExternalRouter extends ExternalLoaderRequestJsonFormat with QueryChildren
           Cluster(system).system.actorSelection(externalLoaderStr).resolveOne().map {
             externalLoader => externalLoader ! deleteChildren
           }
-          complete("Actor deleteed")
+          complete("Actor deleted")
         }
       }
     }
