@@ -15,10 +15,22 @@ class DDataSet extends Actor with ActorLogging {
 
 
   val replicator = DistributedData(context.system).replicator
+   // implicit val node = Cluster(context.system)
+
   implicit val cluster = Cluster(context.system)
   val timeout = 3.seconds
   val readMajority = ReadMajority(timeout)
   val writeMajority = WriteMajority(timeout)
+  var allSubscribedKey = Set[ORSetKey[String]]()
+
+  def addKeyToSubscribe(key: ORSetKey[String])={
+    if(!allSubscribedKey.contains(key)){
+      allSubscribedKey= allSubscribedKey +  key
+     // replicator ! Subscribe(key,self)
+      //Thread.sleep(1000)
+      log.info("Subscribe  a key" )
+    }
+  }
 
   def receive = {
     case AddValueToKey(key, value) => log.info(s"add $value to $key")
@@ -37,6 +49,7 @@ class DDataSet extends Actor with ActorLogging {
     case NotFound(_,Some(replyTo)) =>
     case GetFailure(dataKey, Some(replyTo)) =>
       replicator ! Get(dataKey,ReadLocal, Some(replyTo))
+    case _=>log.info("Some message received")
   }
 
 }
