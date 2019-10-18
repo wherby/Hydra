@@ -9,6 +9,8 @@ val akkaVersion = "2.5.8"
 
 publishMavenStyle := true
 releaseEarlyWith in Global := SonatypePublisher
+pgpPublicRing := file("./travis/local.pubring.asc")
+pgpSecretRing := file("./travis/local.secring.asc")
 
 lazy val appResolvers = Seq(
   "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
