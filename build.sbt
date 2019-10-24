@@ -7,6 +7,11 @@ import sbtassembly.AssemblyPlugin.autoImport._
 
 val akkaVersion = "2.5.8"
 
+publishMavenStyle := true
+releaseEarlyWith in Global := SonatypePublisher
+pgpPublicRing := file("./travis/local.pubring.asc")
+pgpSecretRing := file("./travis/local.secring.asc")
+
 lazy val appResolvers = Seq(
   "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
   "hydrasonatype" at "https://oss.sonatype.org/content/groups/staging/"
@@ -16,7 +21,7 @@ lazy val `hydra-cluster-scala` = project
   .settings(multiJvmSettings: _*)
   .settings(
     name := "Hydra",
-    version := "0.2.1",
+    version := "0.2.2",
     organization := "io.github.wherby",
     scalaVersion := "2.12.2",
     scalacOptions in Compile ++= Seq("-deprecation", "-feature", "-unchecked", "-Xlog-reflective-calls", "-Xlint"),
