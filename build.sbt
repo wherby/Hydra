@@ -52,7 +52,8 @@ lazy val `hydra-cluster-scala` = project
     // disable parallel tests
     parallelExecution in Test := false,
     resolvers ++= appResolvers,
-    licenses := Seq("GPL-3.0" -> url("https://opensource.org/licenses/GPL-3.0"))
+    licenses := Seq("GPL-3.0" -> url("https://opensource.org/licenses/GPL-3.0")),
+    publishArtifact := true,
   )
   .configs (MultiJvm)
 
@@ -61,7 +62,7 @@ assemblyMergeStrategy in assembly := {
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
 }
-useGpg := true
+
 
 publishTo := {
   val nexus = "https://oss.sonatype.org/"
