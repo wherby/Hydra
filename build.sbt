@@ -13,7 +13,7 @@ pgpPublicRing := file("./travis/local.pubring.asc")
 pgpSecretRing := file("./travis/local.secring.asc")
 
 lazy val appResolvers = Seq(
-  "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
+  "typesafe" at "https://repo.typesafe.com/typesafe/releases/",
   "hydrasonatype" at "https://oss.sonatype.org/content/groups/staging/"
 )
 lazy val `hydra-cluster-scala` = project
@@ -52,7 +52,8 @@ lazy val `hydra-cluster-scala` = project
     // disable parallel tests
     parallelExecution in Test := false,
     resolvers ++= appResolvers,
-    licenses := Seq("GPL-3.0" -> url("https://opensource.org/licenses/GPL-3.0")),
+    licenses := Seq(      "AGPL-V3" -> url("https://www.gnu.org/licenses/agpl-3.0.txt"),
+      "Commercial-License"->url("https://github.com/wherby/dora/tree/master/docs/license/CommercialLicense.md")),
     publishArtifact := true,
   )
   .configs (MultiJvm)

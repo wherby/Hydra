@@ -1,5 +1,5 @@
 resolvers := Seq(
-  "typesafe" at "http://repo.typesafe.com/typesafe/releases/"
+  "typesafe" at "https://repo.typesafe.com/typesafe/releases/"
 )
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.19")
 addSbtPlugin("com.typesafe.sbt" % "sbt-multi-jvm" % "0.4.0")
